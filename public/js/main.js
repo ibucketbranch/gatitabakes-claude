@@ -1,12 +1,79 @@
 // Main JavaScript for Gatita Bakes
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the order form
+    // Initialize the order form and cart
     initializeOrderForm();
-    
-    // Setup navigation scroll behavior
+    initializeCart();
     setupNavigation();
 });
+
+// Product data
+const products = {
+    'plain-sourdough': { name: 'Plain Sourdough', price: 8.00 },
+    'everything-sourdough': { name: 'Everything Sourdough', price: 9.00 },
+    'rosemary-sourdough': { name: 'Rosemary Sourdough', price: 9.00 },
+    'plain-bagels': { name: 'Plain Bagels', price: 3.00 },
+    'jalapeno-cheese-bagels': { name: 'Jalapeño Cheese Bagels', price: 3.50 }
+};
+
+// Cart state
+let cart = [];
+
+function initializeCart() {
+    // Add to cart button listeners
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.product;
+            addToCart(productId);
+        });
+    });
+
+    // Initialize cart display
+    updateCartDisplay();
+}
+
+function addToCart(productId) {
+    const product = products[productId];
+    if (product) {
+        cart.push({
+            id: productId,
+            name: product.name,
+            price: product.price
+        });
+        updateCartDisplay();
+        showNotification('Added ' + product.name + ' to cart', 'success');
+    }
+}
+
+function updateCartDisplay() {
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    
+    // Clear current display
+    cartItems.innerHTML = '';
+    
+    // Add each item
+    cart.forEach((item, index) => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+            <span class="item-name">${item.name}</span>
+            <span class="item-price">$${item.price.toFixed(2)}</span>
+            <button class="remove-item" onclick="removeFromCart(${index})">Remove</button>
+        `;
+        cartItems.appendChild(itemElement);
+    });
+    
+    // Update total
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    cartTotal.textContent = '$' + total.toFixed(2);
+}
+
+function removeFromCart(index) {
+    const removed = cart.splice(index, 1)[0];
+    updateCartDisplay();
+    showNotification('Removed ' + removed.name + ' from cart', 'success');
+}
 
 function initializeOrderForm() {
     const orderForm = document.getElementById('order-form');
@@ -15,6 +82,14 @@ function initializeOrderForm() {
             e.preventDefault();
             handleOrderSubmission();
         });
+    }
+
+    // Set minimum date for pickup
+    const pickupDate = document.getElementById('pickup-date');
+    if (pickupDate) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        pickupDate.min = tomorrow.toISOString().split('T')[0];
     }
 }
 
@@ -56,7 +131,13 @@ function setupNavigation() {
 }
 
 async function handleOrderSubmission() {
+    if (cart.length === 0) {
+        showNotification('Please add items to your cart before ordering', 'error');
+        return;
+    }
+
     const formData = new FormData(document.getElementById('order-form'));
+    formData.append('cart', JSON.stringify(cart));
     
     try {
         const response = await fetch('/includes/process-order.php', {
@@ -68,8 +149,9 @@ async function handleOrderSubmission() {
         
         if (result.success) {
             showNotification('Order submitted successfully!', 'success');
-            // Reset form or redirect to confirmation page
-            window.location.href = '/confirmation.php';
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('order-form').reset();
         } else {
             showNotification('Error submitting order. Please try again.', 'error');
         }
