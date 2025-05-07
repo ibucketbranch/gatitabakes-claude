@@ -140,7 +140,7 @@ async function handleOrderSubmission() {
     formData.append('cart', JSON.stringify(cart));
     
     try {
-        const response = await fetch('/includes/process-order.php', {
+        const response = await fetch('../includes/process-order.php', {
             method: 'POST',
             body: formData
         });
@@ -153,7 +153,7 @@ async function handleOrderSubmission() {
             updateCartDisplay();
             document.getElementById('order-form').reset();
         } else {
-            showNotification('Error submitting order. Please try again.', 'error');
+            showNotification(result.message || 'Error submitting order. Please try again.', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
