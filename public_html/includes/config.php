@@ -1,11 +1,11 @@
 <?php
-// Error reporting for development
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Error reporting - disabled for production
+error_reporting(0);
+ini_set('display_errors', 0);
 
 // Site configuration
 define('SITE_NAME', 'Gatita Bakes');
-define('SITE_URL', ''); // Add your site URL here
+define('SITE_URL', 'https://darkseagreen-ferret-989166.hostingersite.com'); // Updated site URL
 define('SITE_EMAIL', 'orders@gatitabakes.com');
 
 // Time zone setting
