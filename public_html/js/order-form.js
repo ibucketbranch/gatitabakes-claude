@@ -157,7 +157,9 @@ async function handleSubmit(event) {
         orderData.deliveryAddress = {
             street: formData.get('delivery-address'),
             unit: formData.get('delivery-unit'),
-            city: formData.get('delivery-city')
+            city: formData.get('delivery-city'),
+            state: formData.get('delivery-state'),
+            zip: formData.get('delivery-zip')
         };
     }
     
