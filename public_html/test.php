@@ -913,7 +913,7 @@ require_once 'includes/header.php';
                     <span class="arrow">&#8592;</span> Back
                 </button>
                 <div class="cart-total-and-submit">
-                    <button type="submit" class="place-order-btn">Place Order</button>
+                    <button type="button" onclick="submitOrder()" class="place-order-btn">Place Order</button>
                 </div>
             </div>
             <div class="payment-info">
