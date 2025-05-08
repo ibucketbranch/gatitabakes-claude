@@ -1,13 +1,13 @@
 <?php
-// Error reporting - disabled for production
-error_reporting(0);
-ini_set('display_errors', 0);
+// Error reporting - temporarily enabled for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Site configuration
 define('SITE_URL', 'https://darkseagreen-ferret-989166.hostingersite.com');
 define('SITE_NAME', 'Gatita Bakes');
 define('SITE_EMAIL', 'orders@gatitabakes.com');
-define('IMAGES_PATH', SITE_URL . '/images');
+define('IMAGES_PATH', 'images');
 
 // Social media
 define('VENMO_HANDLE', '@katvalderrama');
@@ -37,7 +37,7 @@ $PRODUCTS = [
     'jalapeno-cheese-bagels' => [
         'name' => 'Jalapeño Cheese Bagels',
         'price' => 3.50,
-        'image' => 'Cheese-Jalapeńo-Bagels.png'
+        'image' => 'Plain-Bagels.png'
     ],
     'other-sourdough' => [
         'name' => 'Other Sourdough',

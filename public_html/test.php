@@ -1180,6 +1180,65 @@ function submitOrder() {
     const orderNumber = 'GB-' + Date.now().toString().slice(-6);
     const orderTotal = calculateCartTotal();
     
+    // Get form data
+    const form = document.getElementById('order-form');
+    const orderType = document.querySelector('input[name="order_type"]:checked').value;
+    
+    // Create order data object
+    const orderData = {
+        orderNumber: orderNumber,
+        orderType: orderType,
+        total: orderTotal,
+        items: cart,
+        customer: {
+            firstName: document.getElementById('first-name').value,
+            lastName: document.getElementById('last-name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value
+        }
+    };
+    
+    // Add delivery or pickup-specific info
+    if (orderType === 'delivery') {
+        orderData.deliveryAddress = {
+            street: document.getElementById('delivery-address').value,
+            unit: document.getElementById('delivery-unit').value || '',
+            city: document.getElementById('delivery-city').value,
+            state: document.getElementById('delivery-state').value,
+            zip: document.getElementById('delivery-zip').value
+        };
+        orderData.notes = document.querySelector('textarea[name="delivery-notes"]')?.value || '';
+    } else {
+        orderData.pickupLocation = document.getElementById('pickup-location').value;
+        orderData.notes = document.querySelector('textarea[name="pickup-notes"]')?.value || '';
+    }
+    
+    // Send to server
+    fetch('includes/process-order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('Order processed:', result);
+        // Show confirmation page regardless of email success
+        showConfirmationPage(orderNumber, orderTotal, result.success);
+    })
+    .catch(error => {
+        console.error('Error processing order:', error);
+        // Still show confirmation page even if server request failed
+        showConfirmationPage(orderNumber, orderTotal, false);
+    });
+    
+    // Reset form and cart for when they return
+    cart = [];
+    localStorage.removeItem('cart');
+}
+
+function showConfirmationPage(orderNumber, orderTotal, emailSent) {
     // Create the confirmation page content
     const confirmationHTML = `
         <div class="confirmation-page">
@@ -1193,6 +1252,18 @@ function submitOrder() {
                     <p>You can pay directly to <strong>@katvalderrama</strong> via Venmo.</p>
                     <p>Please include your order number <strong>#${orderNumber}</strong> in the notes.</p>
                 </div>
+                
+                ${emailSent ? `
+                <div class="email-confirmation">
+                    <p>A confirmation email has been sent to your email address.</p>
+                    <p>Please check your inbox for details.</p>
+                </div>
+                ` : `
+                <div class="email-error">
+                    <p>We couldn't send a confirmation email at this time.</p>
+                    <p>Please save your order number for reference.</p>
+                </div>
+                `}
                 
                 <div class="payment-options">
                     <div class="payment-option">
@@ -1231,10 +1302,6 @@ function submitOrder() {
             window.location.href = window.location.pathname; // Refresh the current page
         }
     }, 1000);
-    
-    // Reset form and cart for when they return
-    cart = [];
-    localStorage.removeItem('cart');
 }
 
 function generateVenmoLink(orderNumber, amount) {
