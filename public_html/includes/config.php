@@ -48,8 +48,8 @@ $PRODUCTS = [
 
 // Pickup locations
 $PICKUP_LOCATIONS = [
-    'location1' => 'Location 1',
-    'location2' => 'Location 2'
+    'westsac' => 'West Sacramento',
+    'farmersmarket' => 'Sac Farmers Market'
 ];
 
 // Time zone setting

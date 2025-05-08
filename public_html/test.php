@@ -794,6 +794,69 @@ $additional_head = '<style>
             padding: 25px;
         }
     }
+
+    .order-more {
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .order-more-btn {
+        display: inline-block;
+        background-color: #8b4513;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        transition: background-color 0.2s;
+    }
+    
+    .order-more-btn:hover {
+        background-color: #6d3610;
+    }
+
+    .shipping-info, .catering-info {
+        background: #fdfaf7;
+        border: 1px solid #e5a98c;
+        border-radius: 6px;
+        padding: 12px 18px;
+        margin: 18px 0 0 0;
+        color: #5a4e46;
+        font-size: 1em;
+        text-align: center;
+    }
+    .future-reference-box {
+        background: #f5f5f5;
+        border: 1px dashed #ccc;
+        border-radius: 6px;
+        padding: 12px 18px;
+        margin: 24px 0;
+        color: #666;
+        font-size: 0.95em;
+        text-align: center;
+    }
+    .future-reference-box p {
+        margin: 0;
+    }
+    .future-reference-box strong {
+        color: #8b4513;
+    }
+    .return-home-btn {
+        display: inline-block;
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-left: 12px;
+        transition: background-color 0.2s;
+    }
+    .return-home-btn:hover {
+        background-color: #bdbdbd;
+    }
 </style>';
 require_once 'includes/header.php';
 ?>
@@ -822,6 +885,7 @@ require_once 'includes/header.php';
                 </button>
             </div>
         </div>
+
         <!-- Step 2: Conditional Pickup/Delivery Form and Contact Info -->
         <div class="form-section step" id="step-2" style="display:none;">
             <div class="pickup-delivery-row" style="display: flex; gap: 32px;">
@@ -831,8 +895,8 @@ require_once 'includes/header.php';
                         <label for="pickup-location">Select a pickup location</label>
                         <select id="pickup-location" name="pickup-location">
                             <option value="">Select a pickup location</option>
-                            <option value="location1">Location 1</option>
-                            <option value="location2">Location 2</option>
+                            <option value="westsac">West Sacramento (Near I St. Bridge)</option>
+                            <option value="farmersmarket">Sac Farmers Market</option>
                         </select>
                     </div>
                 </div>
@@ -848,7 +912,7 @@ require_once 'includes/header.php';
                     </div>
                     <div class="form-group">
                         <label for="delivery-city">City <span class="required">*</span></label>
-                        <input type="text" id="delivery-city" name="delivery-city" readonly>
+                        <input type="text" id="delivery-city" name="delivery-city">
                     </div>
                     <div class="form-group">
                         <label for="delivery-state">State</label>
@@ -856,22 +920,13 @@ require_once 'includes/header.php';
                     </div>
                     <div class="form-group">
                         <label for="delivery-zip">ZIP Code <span class="required">*</span></label>
-                        <div class="zip-input-container">
-                            <input type="text" 
-                                   id="delivery-zip" 
-                                   name="delivery-zip" 
-                                   pattern="[0-9]{5}" 
-                                   title="Five digit ZIP code" 
-                                   maxlength="5"
-                                   placeholder="Enter ZIP code"
-                                   onchange="lookupZipCode(this.value)"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <div id="zip-loading" class="zip-loading" style="display: none;">
-                                <div class="spinner"></div>
-                            </div>
-                        </div>
-                        <span id="zip-error" class="error-message" style="display: none;">Please enter a valid California ZIP code</span>
-                        <span id="zip-success" class="success-message" style="display: none;">Valid California ZIP code</span>
+                        <input type="text" 
+                               id="delivery-zip" 
+                               name="delivery-zip" 
+                               pattern="[0-9]{5}" 
+                               title="Five digit ZIP code" 
+                               maxlength="5"
+                               placeholder="Enter ZIP code">
                     </div>
                 </div>
                 <div class="contact-info-fields" style="flex: 1;">
@@ -903,6 +958,7 @@ require_once 'includes/header.php';
                 </button>
             </div>
         </div>
+
         <!-- Step 3: Product selection/cart -->
         <div class="form-section step" id="step-3" style="display:none;">
             <h2>Items in Cart</h2>
@@ -1225,12 +1281,12 @@ function submitOrder() {
     .then(result => {
         console.log('Order processed:', result);
         // Show confirmation page regardless of email success
-        showConfirmationPage(orderNumber, orderTotal, result.success);
+        showConfirmationPage(orderNumber, orderTotal, result.success, orderType, orderData.pickupLocation);
     })
     .catch(error => {
         console.error('Error processing order:', error);
         // Still show confirmation page even if server request failed
-        showConfirmationPage(orderNumber, orderTotal, false);
+        showConfirmationPage(orderNumber, orderTotal, false, orderType, orderData.pickupLocation);
     });
     
     // Reset form and cart for when they return
@@ -1238,21 +1294,45 @@ function submitOrder() {
     localStorage.removeItem('cart');
 }
 
-function showConfirmationPage(orderNumber, orderTotal, emailSent) {
+function showConfirmationPage(orderNumber, orderTotal, emailSent, orderType, pickupLocation) {
     // Create the confirmation page content
+    let pickupDetails = '';
+    if (orderType === 'pickup') {
+        if (pickupLocation === 'westsac') {
+            pickupDetails = `
+                <div class="pickup-info">
+                    <p><strong>Pickup Address:</strong><br>291 McDowell Lane<br>West Sacramento, CA 95605</p>
+                    <div class="map-container">
+                        <iframe
+                            width="100%"
+                            height="250"
+                            frameborder="0"
+                            style="border:0"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3119.0447824971387!2d-121.53357548439393!3d38.58931927961859!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ada9b8531c8e5%3A0x68a8655772f2e40a!2s291%20McDowell%20Ln%2C%20West%20Sacramento%2C%20CA%2095605!5e0!3m2!1sen!2sus!4v1683489632669!5m2!1sen!2sus"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            `;
+        } else if (pickupLocation === 'farmersmarket') {
+            pickupDetails = `<div class="pickup-info"><p><strong>Pickup Location:</strong> Sac Farmers Market</p><p>Katerina will provide specific market location and time details when confirming your order.</p></div>`;
+        }
+    }
     const confirmationHTML = `
         <div class="confirmation-page">
             <div class="confirmation-container">
                 <h2>Thank You for Your Order!</h2>
                 <p class="order-number">Order #${orderNumber}</p>
                 <p class="order-total">Total: $${orderTotal.toFixed(2)}</p>
-                
+                ${pickupDetails}
                 <div class="order-confirmation">
-                    <p class="confirmation-message">Katerina will confirm payment received and date for either Pick Up or Delivery.</p>
+                    <p class="confirmation-message">Katerina will confirm receipt of payment and order ready date.</p>
                     <p>You can pay directly to <strong>@katvalderrama</strong> via Venmo.</p>
                     <p>Please include your order number <strong>#${orderNumber}</strong> in the notes.</p>
                 </div>
-                
+                <div class="info-box catering-info">
+                    <strong>Available for large dinners and catering.</strong>
+                </div>
                 ${emailSent ? `
                 <div class="email-confirmation">
                     <p>A confirmation email has been sent to your email address.</p>
@@ -1264,7 +1344,6 @@ function showConfirmationPage(orderNumber, orderTotal, emailSent) {
                     <p>Please save your order number for reference.</p>
                 </div>
                 `}
-                
                 <div class="payment-options">
                     <div class="payment-option">
                         <h3>Pay with Venmo</h3>
@@ -1276,11 +1355,13 @@ function showConfirmationPage(orderNumber, orderTotal, emailSent) {
                         <a href="${generateVenmoLink(orderNumber, orderTotal)}" class="venmo-button" target="_blank">Open Venmo App</a>
                     </div>
                 </div>
-                
                 <p class="thank-you-message">Thanks again!</p>
-                
-                <div class="redirect-message">
-                    <p>You will be returned to the home page in <span id="countdown">30</span> seconds.</p>
+                <div class="future-reference-box shipping-info">
+                    <p><strong>For future orders:</strong> Did you know we can sometimes arrange shipping within California? Feel free to ask about shipping options for your next order! (ツ)</p>
+                </div>
+                <div class="order-more">
+                    <a href="javascript:location.reload()" class="order-more-btn">Order More! 😊</a>
+                    <a href="/" class="return-home-btn">Return Home</a>
                 </div>
             </div>
         </div>
@@ -1288,20 +1369,53 @@ function showConfirmationPage(orderNumber, orderTotal, emailSent) {
     
     // Replace the entire page content with confirmation
     document.body.innerHTML = confirmationHTML;
-    
-    // Add countdown functionality
-    let seconds = 30;
-    const countdownElement = document.getElementById('countdown');
-    const countdownInterval = setInterval(() => {
-        seconds--;
-        if (countdownElement) {
-            countdownElement.textContent = seconds;
+
+    // Add styles for .shipping-info, .catering-info, and .return-home-btn
+    const style = document.createElement('style');
+    style.textContent += `
+        .shipping-info, .catering-info {
+            background: #fdfaf7;
+            border: 1px solid #e5a98c;
+            border-radius: 6px;
+            padding: 12px 18px;
+            margin: 18px 0 0 0;
+            color: #5a4e46;
+            font-size: 1em;
+            text-align: center;
         }
-        if (seconds <= 0) {
-            clearInterval(countdownInterval);
-            window.location.href = window.location.pathname; // Refresh the current page
+        .future-reference-box {
+            background: #f5f5f5;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            padding: 12px 18px;
+            margin: 24px 0;
+            color: #666;
+            font-size: 0.95em;
+            text-align: center;
         }
-    }, 1000);
+        .future-reference-box p {
+            margin: 0;
+        }
+        .future-reference-box strong {
+            color: #8b4513;
+        }
+        .return-home-btn {
+            display: inline-block;
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-left: 12px;
+            transition: background-color 0.2s;
+        }
+        .return-home-btn:hover {
+            background-color: #bdbdbd;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function generateVenmoLink(orderNumber, amount) {
@@ -1405,101 +1519,4 @@ function updateCartDisplay() {
                 </td>
                 <td class="item-price">$${(itemTotal).toFixed(2)}</td>
                 <td class="item-remove"><button class="remove-item" onclick="removeFromCart('${item.id}')">×</button></td>
-            `;
-            tbody.appendChild(row);
-        });
-        container.appendChild(table);
-        cartTotalEls.forEach(el => el.textContent = `Total: $${total.toFixed(2)}`);
-    });
-
-    // Sidebar summary (read-only)
-    const sidebarCartItems = document.querySelector('.sidebar-cart-items');
-    const sidebarCartTotal = document.querySelector('.sidebar-cart-total');
-    let sidebarTotal = 0;
-    if (sidebarCartItems) {
-        sidebarCartItems.innerHTML = '';
-        if (cart.length === 0) {
-            sidebarCartItems.innerHTML = '<div style="color:#888;">No items in order</div>';
-            if (sidebarCartTotal) sidebarCartTotal.textContent = 'Total: $0.00';
-        } else {
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                sidebarTotal += itemTotal;
-                const itemDiv = document.createElement('div');
-                itemDiv.style.display = 'flex';
-                itemDiv.style.justifyContent = 'space-between';
-                itemDiv.style.marginBottom = '4px';
-                itemDiv.innerHTML = `<span>${item.name}</span><span>$${itemTotal.toFixed(2)}</span>`;
-                sidebarCartItems.appendChild(itemDiv);
-            });
-            if (sidebarCartTotal) sidebarCartTotal.textContent = `Total: $${sidebarTotal.toFixed(2)}`;
-        }
-    }
-
-    // Sidebar summary
-    const sidebarCartCount = document.getElementById('sidebar-cart-count');
-    sidebarCartTotal = document.getElementById('sidebar-cart-total');
-    if (sidebarCartCount) sidebarCartCount.textContent = `Items: ${itemCount}`;
-    if (sidebarCartTotal) sidebarCartTotal.textContent = `Total: $${total.toFixed(2)}`;
-}
-
-async function lookupZipCode(zip) {
-    const cityInput = document.getElementById('delivery-city');
-    const zipError = document.getElementById('zip-error');
-    const zipSuccess = document.getElementById('zip-success');
-    const zipLoading = document.getElementById('zip-loading');
-    const submitBtn = document.querySelector('button[type="submit"]');
-    const orderType = document.querySelector('input[name="order_type"]:checked').value;
-
-    // Reset form elements
-    cityInput.value = '';
-    zipError.style.display = 'none';
-    zipSuccess.style.display = 'none';
-    
-    // If it's a pickup order, always enable submit button
-    if (orderType === 'pickup') {
-        submitBtn.disabled = false;
-        return;
-    }
-
-    // For delivery orders, disable submit until valid ZIP is confirmed
-    submitBtn.disabled = true;
-
-    if (zip.length !== 5) return;
-
-    // Show loading spinner
-    zipLoading.style.display = 'flex';
-
-    try {
-        const response = await fetch(`https://api.zippopotam.us/us/${zip}`);
-        const data = await response.json();
-        
-        // Hide loading spinner
-        zipLoading.style.display = 'none';
-
-        // Check if it's a California ZIP code
-        if (data.places[0]['state abbreviation'] === 'CA') {
-            cityInput.value = data.places[0]['place name'];
-            zipError.style.display = 'none';
-            zipSuccess.style.display = 'block';
-            submitBtn.disabled = false;
-        } else {
-            cityInput.value = '';
-            zipError.textContent = 'Sorry, we only deliver to California addresses';
-            zipError.style.display = 'block';
-            zipSuccess.style.display = 'none';
-            submitBtn.disabled = true;
-        }
-    } catch (error) {
-        // Hide loading spinner
-        zipLoading.style.display = 'none';
-        
-        cityInput.value = '';
-        zipError.textContent = 'Invalid ZIP code';
-        zipError.style.display = 'block';
-        zipSuccess.style.display = 'none';
-        submitBtn.disabled = true;
-    }
-}
-</script>
-<?php require_once 'includes/footer.php'; ?> 
+            `

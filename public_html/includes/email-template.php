@@ -27,6 +27,34 @@ function generate_order_email_html($orderData) {
         $locationDetails .= "<br>{$address['city']}, {$address['state']} {$address['zip']}</p>";
     } elseif ($orderType === 'pickup' && isset($orderData['pickupLocation'])) {
         $locationDetails = "<p><strong>Pickup Location:</strong> {$orderData['pickupLocation']}</p>";
+        
+        // Add detailed address for West Sacramento location
+        if ($orderData['pickupLocation'] === 'West Sacramento' || $orderData['pickupLocation'] === 'westsac') {
+            $locationDetails .= "
+                <div class='pickup-details'>
+                    <p><strong>Full Address:</strong><br>
+                    291 McDowell Lane<br>
+                    West Sacramento, CA 95605</p>
+                    
+                    <p class='location-note'><em>Note: Across the street from Burgers & Brew</em></p>
+                    
+                    <div class='map-container'>
+                        <iframe 
+                            width='100%' 
+                            height='250' 
+                            frameborder='0' 
+                            style='border:0' 
+                            src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3119.0447824971387!2d-121.53357548439393!3d38.58931927961859!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ada9b8531c8e5%3A0x68a8655772f2e40a!2s291%20McDowell%20Ln%2C%20West%20Sacramento%2C%20CA%2095605!5e0!3m2!1sen!2sus!4v1683489632669!5m2!1sen!2sus'
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>";
+        } elseif ($orderData['pickupLocation'] === 'Sac Farmers Market') {
+            $locationDetails .= "
+                <div class='pickup-details'>
+                    <p class='location-note'><em>Katerina will provide specific market location and time details when confirming your order.</em></p>
+                </div>";
+        }
     }
     
     // Create items HTML
@@ -162,6 +190,26 @@ function generate_order_email_html($orderData) {
                 padding-top: 20px;
                 border-top: 1px solid #eee;
             }
+            .pickup-details {
+                background: #f9f9f9;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border: 1px solid #e5a98c;
+            }
+            
+            .location-note {
+                color: #666;
+                font-style: italic;
+                margin: 10px 0;
+            }
+            
+            .map-container {
+                margin: 15px 0;
+                border-radius: 5px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
         </style>
     </head>
     <body>
@@ -258,6 +306,13 @@ function generate_order_email_text($orderData) {
         $locationDetails .= "\n{$address['city']}, {$address['state']} {$address['zip']}";
     } elseif ($orderType === 'pickup' && isset($orderData['pickupLocation'])) {
         $locationDetails = "Pickup Location: {$orderData['pickupLocation']}";
+        
+        // Add detailed address for West Sacramento location in plain text
+        if ($orderData['pickupLocation'] === 'West Sacramento') {
+            $locationDetails .= "\nFull Address: 291 McDowell Lane, West Sacramento, CA 95605\nNote: Across the street from Burgers & Brew";
+        } elseif ($orderData['pickupLocation'] === 'Sac Farmers Market') {
+            $locationDetails .= "\nNote: Specific market location and time details will be provided when your order is confirmed.";
+        }
     }
     
     // Create items text

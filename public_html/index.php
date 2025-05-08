@@ -179,7 +179,8 @@ require_once 'includes/header.php';
                                 <label for="pickup-location">Pickup Location</label>
                                 <select id="pickup-location" name="pickup-location" required>
                                     <option value="">Select pickup location</option>
-                                    <option value="location1">123 Bakery Street, San Francisco</option>
+                                    <option value="westsac">West Sacramento (Near I St. Bridge)</option>
+                                    <option value="farmersmarket">Sac Farmers Market</option>
                                 </select>
                             </div>
                             <div class="form-group">
