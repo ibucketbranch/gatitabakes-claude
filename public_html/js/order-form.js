@@ -92,12 +92,12 @@ function updateCartDisplay() {
     cartItemsContainer.innerHTML = '';
     
     if (cart.length === 0) {
-        emptyCartMessage.style.display = 'block';
-        cartTotal.textContent = 'Total: $0.00';
+        if (emptyCartMessage) emptyCartMessage.style.display = 'block';
+        if (cartTotal) cartTotal.textContent = 'Total: $0.00';
         return;
     }
     
-    emptyCartMessage.style.display = 'none';
+    if (emptyCartMessage) emptyCartMessage.style.display = 'none';
     let total = 0;
     
     cart.forEach(item => {
@@ -111,7 +111,12 @@ function updateCartDisplay() {
                 <span class="item-name">${item.name}</span>
                 <div class="item-quantity">
                     <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                    <span>${item.quantity}</span>
+                    <input type="number" 
+                           min="0" 
+                           value="${item.quantity}" 
+                           onchange="updateQuantity('${item.id}', parseInt(this.value) || 0)"
+                           class="quantity-input"
+                           style="width: 50px; text-align: center; margin: 0 5px;">
                     <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
                 </div>
                 <span class="item-price">$${(itemTotal).toFixed(2)}</span>
@@ -122,7 +127,7 @@ function updateCartDisplay() {
         cartItemsContainer.appendChild(itemElement);
     });
     
-    cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+    if (cartTotal) cartTotal.textContent = `Total: $${total.toFixed(2)}`;
 }
 
 async function handleSubmit(event) {
@@ -157,7 +162,7 @@ async function handleSubmit(event) {
     }
     
     try {
-        const response = await fetch(`${baseURL}/submit-order.php`, {
+        const response = await fetch('includes/process-order.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

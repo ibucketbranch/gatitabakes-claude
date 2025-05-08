@@ -1,53 +1,40 @@
 <?php
 header('Content-Type: application/json');
 
-// Prevent direct access
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+// Include configuration and functions
+require_once 'config.php';
+require_once 'functions.php';
+
+// Get the raw POST data
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+
+if (!$data) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid JSON data']);
     exit;
 }
 
-// Get and validate form data
-$formData = $_POST;
-$cart = json_decode($formData['cart'] ?? '[]', true);
+try {
+    // Validate required fields
+    $required = ['customer', 'orderType', 'items'];
+    foreach ($required as $field) {
+        if (!isset($data[$field])) {
+            throw new Exception("Missing required field: {$field}");
+        }
+    }
 
-// Basic validation
-if (empty($cart)) {
-    echo json_encode(['success' => false, 'message' => 'Cart is empty']);
-    exit;
-}
+    // Process the order (you can add your order processing logic here)
+    $orderNumber = 'GB-' . date('Ymd') . '-' . substr(uniqid(), -4);
+    
+    // For now, just return success
+    echo json_encode([
+        'success' => true,
+        'message' => 'Order received successfully',
+        'orderNumber' => $orderNumber
+    ]);
 
-if (empty($formData['name']) || empty($formData['email']) || empty($formData['phone'])) {
-    echo json_encode(['success' => false, 'message' => 'Please fill in all required fields']);
-    exit;
-}
-
-if (empty($formData['pickup-date']) || empty($formData['pickup-time'])) {
-    echo json_encode(['success' => false, 'message' => 'Please select pickup date and time']);
-    exit;
-}
-
-// Validate email
-if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-    echo json_encode(['success' => false, 'message' => 'Please enter a valid email address']);
-    exit;
-}
-
-// Process the order (in a real application, you would save to database here)
-// For now, we'll just send a success response
-$response = [
-    'success' => true,
-    'message' => 'Order received successfully! We will contact you to confirm your order.',
-    'order' => [
-        'name' => $formData['name'],
-        'email' => $formData['email'],
-        'phone' => $formData['phone'],
-        'pickup_date' => $formData['pickup-date'],
-        'pickup_time' => $formData['pickup-time'],
-        'special_instructions' => $formData['special-instructions'] ?? '',
-        'cart' => $cart
-    ]
-];
-
-echo json_encode($response); 
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode(['error' => $e->getMessage()]);
+} 
