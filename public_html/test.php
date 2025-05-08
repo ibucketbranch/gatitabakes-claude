@@ -1052,6 +1052,10 @@ const steps = document.querySelectorAll('.step');
 let currentStep = 0;
 
 function showStep(n) {
+    // Validate step bounds
+    if (n < 0) n = 0;
+    if (n >= steps.length) n = steps.length - 1;
+    
     // Hide all steps
     steps.forEach(step => step.style.display = 'none');
     
@@ -1069,7 +1073,7 @@ function showStep(n) {
         if (orderTypeInput && orderTypeInput.value === 'delivery') {
             if (deliveryFields) deliveryFields.style.display = '';
             if (pickupFields) pickupFields.style.display = 'none';
-        } else {
+        } else if (orderTypeInput && orderTypeInput.value === 'pickup') {
             if (deliveryFields) deliveryFields.style.display = 'none';
             if (pickupFields) pickupFields.style.display = '';
         }
@@ -1083,9 +1087,13 @@ function updateNavigationButtons() {
     const backButtons = document.querySelectorAll('.back-btn');
     const nextButtons = document.querySelectorAll('.next-btn');
     
-    // Update back buttons
+    // Hide back button on first step, show on others
     backButtons.forEach(btn => {
-        btn.style.display = currentStep === 0 ? 'none' : 'block';
+        if (currentStep === 0) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = 'flex';
+        }
     });
     
     // Update next buttons
@@ -1094,7 +1102,7 @@ function updateNavigationButtons() {
             btn.textContent = 'Place Order';
             btn.classList.add('place-order-btn');
         } else {
-            btn.textContent = 'Next';
+            btn.innerHTML = 'Next <span class="arrow">&#8594;</span>';
             btn.classList.remove('place-order-btn');
         }
     });
@@ -1103,14 +1111,14 @@ function updateNavigationButtons() {
 function validateStep(step) {
     let orderType;
     switch(step) {
-        case 0:
+        case 1:
             orderType = document.querySelector('input[name="order_type"]:checked');
             if (!orderType) {
                 alert('Please select Pickup or Delivery.');
                 return false;
             }
             return true;
-        case 1:
+        case 2:
             // Validate contact info
             const requiredFields = ['first-name', 'last-name', 'email', 'phone'];
             for (const field of requiredFields) {
@@ -1136,7 +1144,7 @@ function validateStep(step) {
                 }
             }
             return true;
-        case 2:
+        case 3:
             // Validate cart is not empty
             if (cart.length === 0) {
                 alert('Please add at least one item to your cart.');
@@ -1151,7 +1159,7 @@ function validateStep(step) {
 // Initialize navigation
 document.addEventListener('DOMContentLoaded', function() {
     // Show first step
-    showStep(0);
+    showStep(1);
     
     // Add click handlers for navigation buttons
     document.querySelectorAll('.next-btn').forEach(btn => {
@@ -1176,17 +1184,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to Pickup/Delivery radio buttons to update fields in real time
     document.querySelectorAll('input[name="order_type"]').forEach(radio => {
         radio.addEventListener('change', function() {
-            // Only update if on step 2
-            if (currentStep === 1) {
-                const deliveryFields = document.getElementById('delivery-address-fields');
-                const pickupFields = document.getElementById('pickup-location-fields');
-                if (this.value === 'delivery') {
-                    if (deliveryFields) deliveryFields.style.display = '';
-                    if (pickupFields) pickupFields.style.display = 'none';
-                } else {
-                    if (deliveryFields) deliveryFields.style.display = 'none';
-                    if (pickupFields) pickupFields.style.display = '';
-                }
+            const deliveryFields = document.getElementById('delivery-address-fields');
+            const pickupFields = document.getElementById('pickup-location-fields');
+            if (this.value === 'delivery') {
+                if (deliveryFields) deliveryFields.style.display = '';
+                if (pickupFields) pickupFields.style.display = 'none';
+            } else {
+                if (deliveryFields) deliveryFields.style.display = 'none';
+                if (pickupFields) pickupFields.style.display = '';
             }
         });
     });
@@ -1231,9 +1236,41 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.slides.length > 0) updateSlide(0);
 });
 
+function generateOrderNumber() {
+    // Get current year's last two digits
+    const year = new Date().getFullYear().toString().slice(-2);
+    
+    // Get or initialize the counter for this year from localStorage
+    let yearKey = `orderCounter${year}`;
+    let counter = localStorage.getItem(yearKey);
+    
+    // If it's a new year or no counter exists, start from 1
+    if (!counter) {
+        counter = 1;
+    } else {
+        counter = parseInt(counter) + 1;
+        
+        // If we reach 9999, show a warning
+        if (counter > 9999) {
+            console.warn('Order number counter has exceeded maximum value for the year');
+            // Reset to 1 to prevent issues
+            counter = 1;
+        }
+    }
+    
+    // Store the new counter
+    localStorage.setItem(yearKey, counter);
+    
+    // Format the counter to have leading zeros (4 digits)
+    const paddedCounter = counter.toString().padStart(4, '0');
+    
+    // Return the formatted order number (e.g., GB-250001)
+    return `GB-${year}${paddedCounter}`;
+}
+
 function submitOrder() {
-    // Generate order number - simple timestamp-based ID
-    const orderNumber = 'GB-' + Date.now().toString().slice(-6);
+    // Generate structured order number
+    const orderNumber = generateOrderNumber();
     const orderTotal = calculateCartTotal();
     
     // Get form data
