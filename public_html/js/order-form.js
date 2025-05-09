@@ -38,6 +38,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Navigation logic for steps
+    const steps = document.querySelectorAll('.step');
+    const nextBtn = document.getElementById('next-btn');
+    const backBtn = document.getElementById('back-btn');
+    let currentStep = 1;
+
+    function updateNavButtons() {
+        if (currentStep === 1) {
+            backBtn.style.display = 'none';
+            nextBtn.style.display = 'inline-flex';
+        } else if (currentStep === steps.length) {
+            backBtn.style.display = 'inline-flex';
+            nextBtn.style.display = 'none';
+        } else {
+            backBtn.style.display = 'inline-flex';
+            nextBtn.style.display = 'inline-flex';
+        }
+    }
+
+    nextBtn.addEventListener('click', function() {
+        if (currentStep < steps.length) {
+            steps[currentStep - 1].style.display = 'none';
+            steps[currentStep].style.display = 'block';
+            currentStep++;
+            updateNavButtons();
+        }
+    });
+
+    backBtn.addEventListener('click', function() {
+        if (currentStep > 1) {
+            steps[currentStep - 1].style.display = 'none';
+            steps[currentStep - 2].style.display = 'block';
+            currentStep--;
+            updateNavButtons();
+        }
+    });
+
+    // Initialize step visibility
+    steps.forEach((step, idx) => {
+        step.style.display = idx === 0 ? 'block' : 'none';
+    });
+    updateNavButtons();
+
     // Handle form submission
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
