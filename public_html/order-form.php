@@ -12,8 +12,10 @@ require_once 'includes/header.php';
         <div class="product-grid">
             <?php foreach ($PRODUCTS as $id => $product): ?>
             <div class="product-card">
-                <img src="<?php echo IMAGES_PATH . '/' . $product['image']; ?>" 
-                     alt="<?php echo $product['name']; ?>">
+                <div class="product-image-container">
+                    <img src="<?php echo IMAGES_PATH . '/' . $product['image']; ?>" 
+                         alt="<?php echo $product['name']; ?>">
+                </div>
                 <h3><?php echo $product['name']; ?></h3>
                 <p class="price">$<?php echo number_format($product['price'], 2); ?></p>
                 <button class="add-to-cart" data-id="<?php echo $id; ?>" data-price="<?php echo $product['price']; ?>">Add to Cart</button>
