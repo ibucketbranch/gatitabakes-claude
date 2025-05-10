@@ -2,12 +2,15 @@
  * Project: Gatita Bakes Online Order System
  * Title: Order Form JavaScript
  * Author/Developer: Bucketbranch Engineering LLC
- * Version: 20250905.1
- * Date: 2025-09-05
+ * Version: 20250510.2
+ * Date: 2025-05-10
  */
 
 // Cart functionality
-let cart = [];
+let cart = [
+    { id: 'plain-sourdough', name: 'Plain Sourdough', price: 8.00, quantity: 2 },
+    { id: 'everything-sourdough', name: 'Everything Sourdough', price: 9.00, quantity: 1 }
+];
 const baseURL = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,17 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
         cart = JSON.parse(savedCart);
         updateCartDisplay();
     }
-
-    // Add event listeners for add to cart buttons
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function() {
-            const productId = this.dataset.id;
-            const productPrice = parseFloat(this.dataset.price);
-            const productName = this.closest('.product-card').querySelector('h3').textContent;
-            
-            addToCart(productId, productName, productPrice);
-        });
-    });
 
     // Handle order type toggle
     const orderTypeInputs = document.querySelectorAll('input[name="order_type"]');
@@ -46,48 +38,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Navigation logic for steps
-    const steps = document.querySelectorAll('.step');
-    const nextBtn = document.getElementById('next-btn');
-    const backBtn = document.getElementById('back-btn');
-    let currentStep = 1;
-
-    function updateNavButtons() {
-        if (currentStep === 1) {
-            backBtn.style.display = 'none';
-            nextBtn.style.display = 'inline-flex';
-        } else if (currentStep === steps.length) {
-            backBtn.style.display = 'inline-flex';
-            nextBtn.style.display = 'none';
+    // Initialize with proper display based on default selection
+    const defaultOrderType = document.querySelector('input[name="order_type"]:checked');
+    if (defaultOrderType) {
+        if (defaultOrderType.value === 'pickup') {
+            pickupFields.style.display = 'block';
+            deliveryFields.style.display = 'none';
         } else {
-            backBtn.style.display = 'inline-flex';
-            nextBtn.style.display = 'inline-flex';
+            pickupFields.style.display = 'none';
+            deliveryFields.style.display = 'block';
         }
     }
 
-    nextBtn.addEventListener('click', function() {
-        if (currentStep < steps.length) {
-            steps[currentStep - 1].style.display = 'none';
-            steps[currentStep].style.display = 'block';
-            currentStep++;
-            updateNavButtons();
-        }
+    // Handle remove item buttons in cart
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.id;
+            removeFromCart(productId);
+        });
     });
-
-    backBtn.addEventListener('click', function() {
-        if (currentStep > 1) {
-            steps[currentStep - 1].style.display = 'none';
-            steps[currentStep - 2].style.display = 'block';
-            currentStep--;
-            updateNavButtons();
-        }
-    });
-
-    // Initialize step visibility
-    steps.forEach((step, idx) => {
-        step.style.display = idx === 0 ? 'block' : 'none';
-    });
-    updateNavButtons();
 
     // Handle form submission
     const orderForm = document.getElementById('order-form');
@@ -96,59 +65,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function addToCart(productId, productName, price) {
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({
-            id: productId,
-            name: productName,
-            price: price,
-            quantity: 1
-        });
-    }
-    
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartDisplay();
-}
-
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartDisplay();
 }
 
-function updateQuantity(productId, newQuantity) {
-    const item = cart.find(item => item.id === productId);
-    if (item) {
-        if (newQuantity <= 0) {
-            removeFromCart(productId);
-        } else {
-            item.quantity = newQuantity;
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartDisplay();
-        }
-    }
-}
-
 function updateCartDisplay() {
-    const cartItemsContainer = document.querySelector('.cart-items');
-    const emptyCartMessage = document.getElementById('empty-cart-message');
-    const cartTotal = document.querySelector('.cart-total');
+    const cartItemsContainer = document.getElementById('sidebar-cart-items');
+    const cartTotal = document.getElementById('cart-total');
     
     if (!cartItemsContainer) return;
     
+    // Clear existing items
     cartItemsContainer.innerHTML = '';
     
     if (cart.length === 0) {
-        if (emptyCartMessage) emptyCartMessage.style.display = 'block';
-        if (cartTotal) cartTotal.textContent = 'Total: $0.00';
+        cartItemsContainer.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+        if (cartTotal) cartTotal.textContent = '$0.00';
         return;
     }
     
-    if (emptyCartMessage) emptyCartMessage.style.display = 'none';
     let total = 0;
     
     cart.forEach(item => {
@@ -160,25 +97,21 @@ function updateCartDisplay() {
         itemElement.innerHTML = `
             <div class="item-details">
                 <span class="item-name">${item.name}</span>
-                <div class="item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                    <input type="number" 
-                           min="0" 
-                           value="${item.quantity}" 
-                           onchange="updateQuantity('${item.id}', parseInt(this.value) || 0)"
-                           class="quantity-input"
-                           style="width: 50px; text-align: center; margin: 0 5px;">
-                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                </div>
+                <span class="item-quantity">× ${item.quantity}</span>
                 <span class="item-price">$${(itemTotal).toFixed(2)}</span>
-                <button class="remove-item" onclick="removeFromCart('${item.id}')">×</button>
             </div>
+            <button class="remove-item" data-id="${item.id}">×</button>
         `;
         
         cartItemsContainer.appendChild(itemElement);
+        
+        // Add event listener to the newly created remove button
+        itemElement.querySelector('.remove-item').addEventListener('click', function() {
+            removeFromCart(this.dataset.id);
+        });
     });
     
-    if (cartTotal) cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+    if (cartTotal) cartTotal.textContent = `$${total.toFixed(2)}`;
 }
 
 async function handleSubmit(event) {
@@ -192,47 +125,51 @@ async function handleSubmit(event) {
     const formData = new FormData(event.target);
     const orderData = {
         customer: {
-            firstName: formData.get('first-name'),
-            lastName: formData.get('last-name'),
+            fullName: formData.get('full-name'),
             email: formData.get('email'),
             phone: formData.get('phone')
         },
         orderType: formData.get('order_type'),
-        items: cart,
-        notes: formData.get(formData.get('order_type') === 'pickup' ? 'pickup-notes' : 'delivery-notes')
+        paymentMethod: formData.get('payment-method'),
+        items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity
+        })),
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     };
     
+    // Add delivery or pickup specific data
     if (orderData.orderType === 'pickup') {
-        orderData.pickupLocation = formData.get('pickup-location');
+        orderData.pickup = {
+            location: formData.get('pickup-location'),
+            time: formData.get('pickup-time'),
+        };
     } else {
-        orderData.deliveryAddress = {
-            street: formData.get('delivery-address'),
+        orderData.delivery = {
+            address: formData.get('delivery-address'),
             unit: formData.get('delivery-unit'),
             city: formData.get('delivery-city'),
-            state: formData.get('delivery-state'),
-            zip: formData.get('delivery-zip')
+            zip: formData.get('delivery-zip'),
+            notes: formData.get('delivery-notes')
         };
     }
     
     try {
-        const response = await fetch('includes/process-order.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
+        // Here you would normally send data to server
+        console.log('Order data to submit:', orderData);
         
-        if (response.ok) {
-            const result = await response.json();
-            alert('Order submitted successfully! Check your email for confirmation.');
-            cart = [];
-            localStorage.removeItem('cart');
-            updateCartDisplay();
-            event.target.reset();
-        } else {
-            throw new Error('Failed to submit order');
-        }
+        // For demo purposes, simulate a successful order
+        alert('Order submitted successfully! You will receive a confirmation email shortly.');
+        
+        // Clear cart after successful order
+        cart = [];
+        localStorage.removeItem('cart');
+        
+        // Redirect to confirmation page
+        // window.location.href = `${baseURL}/order-confirmation.php?id=${response.orderId}`;
     } catch (error) {
         console.error('Error submitting order:', error);
         alert('There was an error submitting your order. Please try again.');
