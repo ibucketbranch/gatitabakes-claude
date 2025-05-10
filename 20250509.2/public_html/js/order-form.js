@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const productId = this.dataset.id;
             const productPrice = parseFloat(this.dataset.price);
             const productName = this.closest('.product-card').querySelector('h3').textContent;
+            const productImage = this.closest('.product-card').querySelector('img').src;
             
-            addToCart(productId, productName, productPrice);
+            addToCart(productId, productName, productPrice, productImage);
         });
     });
 
@@ -71,6 +72,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     nextBtn.addEventListener('click', function() {
+        // Validate current step before proceeding
+        if (currentStep === 1) {
+            // Check if order type is selected
+            const orderTypeSelected = document.querySelector('input[name="order_type"]:checked');
+            if (!orderTypeSelected) {
+                alert('Please select an order type (Pickup or Delivery)');
+                return;
+            }
+            
+            // Check if cart has items
+            if (cart.length === 0) {
+                alert('Please add at least one item to your cart before continuing');
+                return;
+            }
+        }
+        
         if (currentStep < steps.length) {
             steps[currentStep - 1].style.display = 'none';
             steps[currentStep].style.display = 'block';
@@ -97,11 +114,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
-        orderForm.addEventListener('submit', handleSubmit);
+        orderForm.addEventListener('submit', submitOrder);
     }
 });
 
-function addToCart(productId, productName, price) {
+function addToCart(productId, productName, price, imageUrl) {
     const existingItem = cart.find(item => item.id === productId);
     
     if (existingItem) {
@@ -111,12 +128,24 @@ function addToCart(productId, productName, price) {
             id: productId,
             name: productName,
             price: price,
-            quantity: 1
+            quantity: 1,
+            image: imageUrl
         });
     }
     
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartDisplay();
+    
+    // Show brief animation or feedback
+    const addButton = document.querySelector(`.add-to-cart[data-id="${productId}"]`);
+    if (addButton) {
+        addButton.textContent = "Added!";
+        addButton.classList.add("added");
+        setTimeout(() => {
+            addButton.textContent = "Add to Cart";
+            addButton.classList.remove("added");
+        }, 1000);
+    }
 }
 
 function removeFromCart(productId) {
@@ -139,21 +168,19 @@ function updateQuantity(productId, newQuantity) {
 }
 
 function updateCartDisplay() {
-    const cartItemsContainer = document.querySelector('.cart-items');
-    const emptyCartMessage = document.getElementById('empty-cart-message');
-    const cartTotal = document.querySelector('.cart-total');
+    const sidebarCartItems = document.querySelector('.sidebar-cart-items');
+    const sidebarCartTotal = document.querySelector('.sidebar-cart-total');
     
-    if (!cartItemsContainer) return;
+    if (!sidebarCartItems || !sidebarCartTotal) return;
     
-    cartItemsContainer.innerHTML = '';
+    sidebarCartItems.innerHTML = '';
     
     if (cart.length === 0) {
-        if (emptyCartMessage) emptyCartMessage.style.display = 'block';
-        if (cartTotal) cartTotal.textContent = 'Total: $0.00';
+        sidebarCartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+        sidebarCartTotal.textContent = 'Total: $0.00';
         return;
     }
     
-    if (emptyCartMessage) emptyCartMessage.style.display = 'none';
     let total = 0;
     
     cart.forEach(item => {
@@ -164,29 +191,19 @@ function updateCartDisplay() {
         itemElement.className = 'cart-item';
         itemElement.innerHTML = `
             <div class="item-details">
-                <span class="item-name">${item.name}</span>
-                <div class="item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                    <input type="number" 
-                           min="0" 
-                           value="${item.quantity}" 
-                           onchange="updateQuantity('${item.id}', parseInt(this.value) || 0)"
-                           class="quantity-input"
-                           style="width: 50px; text-align: center; margin: 0 5px;">
-                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                </div>
+                <span class="item-name">${item.name} (${item.quantity})</span>
                 <span class="item-price">$${(itemTotal).toFixed(2)}</span>
                 <button class="remove-item" onclick="removeFromCart('${item.id}')">×</button>
             </div>
         `;
         
-        cartItemsContainer.appendChild(itemElement);
+        sidebarCartItems.appendChild(itemElement);
     });
     
-    if (cartTotal) cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+    sidebarCartTotal.textContent = `Total: $${total.toFixed(2)}`;
 }
 
-async function handleSubmit(event) {
+function submitOrder(event) {
     event.preventDefault();
     
     if (cart.length === 0) {
@@ -194,17 +211,70 @@ async function handleSubmit(event) {
         return;
     }
     
-    const formData = new FormData(event.target);
+    const form = document.getElementById('order-form');
+    if (!form) return;
+    
+    // For step 1, check if order type is selected
+    const orderType = document.querySelector('input[name="order_type"]:checked');
+    if (!orderType) {
+        alert('Please select an order type (Pickup or Delivery)');
+        return;
+    }
+    
+    // For step 2 (the form fields), we need to ensure they're filled
+    // Get only the visible required fields based on order type
+    const requiredFields = [];
+    
+    if (orderType.value === 'pickup') {
+        requiredFields.push(document.getElementById('pickup-location'));
+    } else {
+        requiredFields.push(
+            document.getElementById('delivery-address'),
+            document.getElementById('delivery-city'),
+            document.getElementById('delivery-zip')
+        );
+    }
+    
+    // Common required fields
+    requiredFields.push(
+        document.getElementById('first-name'),
+        document.getElementById('last-name'),
+        document.getElementById('email'),
+        document.getElementById('phone')
+    );
+    
+    // Validate all required fields
+    let isValid = true;
+    for (const field of requiredFields) {
+        if (!field.value.trim()) {
+            field.classList.add('error');
+            isValid = false;
+        } else {
+            field.classList.remove('error');
+        }
+    }
+    
+    if (!isValid) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Generate a simple order number
+    const orderNumber = 'GB' + Date.now().toString().slice(-6);
+    
+    // Build the order data
+    const formData = new FormData(form);
     const orderData = {
+        orderNumber: orderNumber,
         customer: {
             firstName: formData.get('first-name'),
             lastName: formData.get('last-name'),
             email: formData.get('email'),
             phone: formData.get('phone')
         },
-        orderType: formData.get('order_type'),
+        orderType: orderType.value,
         items: cart,
-        notes: formData.get(formData.get('order_type') === 'pickup' ? 'pickup-notes' : 'delivery-notes')
+        orderDate: new Date().toISOString()
     };
     
     if (orderData.orderType === 'pickup') {
@@ -212,34 +282,36 @@ async function handleSubmit(event) {
     } else {
         orderData.deliveryAddress = {
             street: formData.get('delivery-address'),
-            unit: formData.get('delivery-unit'),
+            unit: formData.get('delivery-unit') || '',
             city: formData.get('delivery-city'),
             state: formData.get('delivery-state'),
             zip: formData.get('delivery-zip')
         };
     }
     
-    try {
-        const response = await fetch('includes/process-order.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            alert('Order submitted successfully! Check your email for confirmation.');
+    // Submit the order via AJAX
+    fetch('includes/process-order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`Order #${data.orderNumber} submitted successfully! Check your email for confirmation.`);
             cart = [];
             localStorage.removeItem('cart');
             updateCartDisplay();
-            event.target.reset();
+            form.reset();
+            window.location.href = 'order-confirmation.php?order=' + data.orderNumber;
         } else {
-            throw new Error('Failed to submit order');
+            alert('Error: ' + data.message);
         }
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('Error submitting order:', error);
         alert('There was an error submitting your order. Please try again.');
-    }
+    });
 }

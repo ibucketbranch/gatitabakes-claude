@@ -3,7 +3,7 @@
  * Title: config.php
  * Author/Developer: Bucketbranch Engineering LLC
  * Version: 20250905.1
- * Date: 2024-06-09
+ * Date: 2024-05-09
  */
 <?php
 // Error reporting - temporarily enabled for debugging
@@ -14,6 +14,7 @@ ini_set('display_errors', 1);
 define('SITE_URL', 'https://darkseagreen-ferret-989166.hostingersite.com');
 define('SITE_NAME', 'Gatita Bakes');
 define('SITE_EMAIL', 'orders@gatitabakes.com');
+define('ADMIN_EMAIL', 'katvalderrama@bucketbranch.com');
 define('IMAGES_PATH', 'images');
 
 // Social media

@@ -3,7 +3,7 @@
  * Title: email-template.php
  * Author/Developer: Bucketbranch Engineering LLC
  * Version: 20250905.1
- * Date: 2024-06-09
+ * Date: 2024-05-09
  */
 /**
  * Email Template for Gatita Bakes Order Confirmation
@@ -15,8 +15,17 @@ function generate_order_email_html($orderData) {
     $orderNumber = $orderData['orderNumber'];
     $orderType = $orderData['orderType'];
     $items = $orderData['items'];
-    $total = $orderData['total'];
-    $notes = $orderData['notes'] ?? '';
+    
+    // Use orderTotal from the data if available, otherwise calculate it
+    $total = isset($orderData['orderTotal']) ? $orderData['orderTotal'] : 0;
+    if ($total == 0) {
+        foreach ($items as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+    }
+    
+    $notes = isset($orderData['notes']) ? $orderData['notes'] : '';
+    $orderDate = isset($orderData['orderDate']) ? date('F j, Y', strtotime($orderData['orderDate'])) : date('F j, Y');
     
     // Format address or pickup location
     $locationDetails = '';
@@ -32,10 +41,23 @@ function generate_order_email_html($orderData) {
         
         $locationDetails .= "<br>{$address['city']}, {$address['state']} {$address['zip']}</p>";
     } elseif ($orderType === 'pickup' && isset($orderData['pickupLocation'])) {
-        $locationDetails = "<p><strong>Pickup Location:</strong> {$orderData['pickupLocation']}</p>";
+        $pickupLocationName = '';
+        
+        switch ($orderData['pickupLocation']) {
+            case 'westsac':
+                $pickupLocationName = 'West Sacramento (Near I St. Bridge)';
+                break;
+            case 'farmersmarket':
+                $pickupLocationName = 'Sacramento Farmers Market';
+                break;
+            default:
+                $pickupLocationName = $orderData['pickupLocation'];
+        }
+        
+        $locationDetails = "<p><strong>Pickup Location:</strong> {$pickupLocationName}</p>";
         
         // Add detailed address for West Sacramento location
-        if ($orderData['pickupLocation'] === 'West Sacramento' || $orderData['pickupLocation'] === 'westsac') {
+        if ($orderData['pickupLocation'] === 'westsac') {
             $locationDetails .= "
                 <div class='pickup-details'>
                     <p><strong>Full Address:</strong><br>
@@ -45,17 +67,12 @@ function generate_order_email_html($orderData) {
                     <p class='location-note'><em>Note: Across the street from Burgers & Brew</em></p>
                     
                     <div class='map-container'>
-                        <iframe 
-                            width='100%' 
-                            height='250' 
-                            frameborder='0' 
-                            style='border:0' 
-                            src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3119.0447824971387!2d-121.53357548439393!3d38.58931927961859!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ada9b8531c8e5%3A0x68a8655772f2e40a!2s291%20McDowell%20Ln%2C%20West%20Sacramento%2C%20CA%2095605!5e0!3m2!1sen!2sus!4v1683489632669!5m2!1sen!2sus'
-                            allowfullscreen>
-                        </iframe>
+                        <a href='https://maps.google.com/?q=291+McDowell+Ln,+West+Sacramento,+CA+95605' target='_blank'>
+                            View on Google Maps
+                        </a>
                     </div>
                 </div>";
-        } elseif ($orderData['pickupLocation'] === 'Sac Farmers Market') {
+        } elseif ($orderData['pickupLocation'] === 'farmersmarket') {
             $locationDetails .= "
                 <div class='pickup-details'>
                     <p class='location-note'><em>Katerina will provide specific market location and time details when confirming your order.</em></p>
@@ -66,12 +83,15 @@ function generate_order_email_html($orderData) {
     // Create items HTML
     $itemsHtml = '';
     foreach ($items as $item) {
-        $price = $item['price'] * $item['quantity'];
+        $itemTotal = number_format($item['price'] * $item['quantity'], 2);
+        $itemPrice = number_format($item['price'], 2);
+        
         $itemsHtml .= "
             <tr>
                 <td>{$item['name']}</td>
                 <td class=\"qty\">{$item['quantity']}</td>
-                <td class=\"price\">\${$price}</td>
+                <td class=\"unit-price\">\${$itemPrice}</td>
+                <td class=\"price\">\${$itemTotal}</td>
             </tr>";
     }
     
@@ -79,7 +99,7 @@ function generate_order_email_html($orderData) {
     $venmoUrl = sprintf(
         'https://venmo.com/%s?txn=pay&amount=%s&note=%s',
         'katvalderrama',
-        urlencode($total),
+        number_format($total, 2),
         urlencode("GatitaBakes Order #{$orderNumber}")
     );
 
@@ -94,38 +114,50 @@ function generate_order_email_html($orderData) {
             body {
                 font-family: Arial, sans-serif;
                 line-height: 1.6;
-                color: #333;
+                color: #4A3728;
                 margin: 0;
                 padding: 0;
-                background-color: #f9f9f9;
+                background-color: #FFF8F0;
             }
             .container {
                 max-width: 600px;
                 margin: 0 auto;
                 padding: 20px;
                 background-color: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             }
             .header {
                 text-align: center;
-                padding: 20px 0;
-                border-bottom: 2px solid #e5a98c;
+                padding: 25px 0;
+                border-bottom: 2px solid #D2B48C;
             }
             .header h1 {
-                color: #8b4513;
+                color: #8B5E3C;
                 margin: 0;
-                font-size: 24px;
+                font-size: 28px;
+                font-weight: 700;
             }
             .greeting {
-                margin-top: 20px;
+                margin-top: 25px;
             }
             .order-details {
                 margin: 30px 0;
             }
             .order-details h2 {
-                color: #5a4e46;
-                font-size: 18px;
-                border-bottom: 1px solid #e5a98c;
-                padding-bottom: 5px;
+                color: #8B5E3C;
+                font-size: 20px;
+                border-bottom: 1px solid #D2B48C;
+                padding-bottom: 8px;
+            }
+            .order-meta {
+                background: #FFF8F0;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+            .order-meta p {
+                margin: 5px 0;
             }
             table {
                 width: 100%;
@@ -134,87 +166,111 @@ function generate_order_email_html($orderData) {
             }
             table th {
                 text-align: left;
-                padding: 10px;
-                background: #fdfaf7;
-                border-bottom: 2px solid #e5a98c;
+                padding: 12px;
+                background: #FFF8F0;
+                border-bottom: 2px solid #D2B48C;
+                color: #8B5E3C;
             }
             table td {
-                padding: 10px;
-                border-bottom: 1px solid #eee;
+                padding: 12px;
+                border-bottom: 1px solid #f0e6d9;
             }
             table .qty {
                 text-align: center;
                 width: 60px;
             }
+            table .unit-price {
+                text-align: right;
+                width: 80px;
+            }
             table .price {
                 text-align: right;
                 width: 100px;
+                font-weight: 600;
             }
             .total {
                 text-align: right;
                 font-weight: bold;
                 margin-top: 15px;
-                padding-top: 15px;
-                border-top: 2px solid #e5a98c;
-                font-size: 16px;
+                padding: 15px;
+                border-top: 2px solid #D2B48C;
+                font-size: 18px;
+                background: #FFF8F0;
+                border-radius: 8px;
             }
             .info-box {
-                background: #fdfaf7;
-                padding: 15px;
-                border-radius: 5px;
-                margin: 20px 0;
-                border: 1px solid #e5a98c;
+                background: #FFF8F0;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 25px 0;
+                border: 1px solid #D2B48C;
             }
             .info-box h3 {
-                color: #8b4513;
+                color: #8B5E3C;
                 margin-top: 0;
-                font-size: 16px;
+                font-size: 18px;
             }
             .button {
                 display: inline-block;
-                background-color: #008CFF;
+                background-color: #8B5E3C;
                 color: white;
                 text-decoration: none;
-                padding: 12px 25px;
-                border-radius: 5px;
+                padding: 14px 30px;
+                border-radius: 40px;
                 margin: 15px 0;
                 font-weight: bold;
+                text-align: center;
+            }
+            .button:hover {
+                background-color: #4A3728;
             }
             .important {
-                color: #721c24;
-                background: #f8d7da;
+                color: #8B5E3C;
+                background: #FFF8F0;
                 padding: 15px;
-                border-radius: 5px;
+                border-radius: 8px;
                 margin: 20px 0;
-                border: 1px solid #f5c6cb;
+                border: 1px solid #D2B48C;
             }
             .footer {
                 margin-top: 30px;
                 text-align: center;
-                color: #666;
-                font-size: 12px;
-                padding-top: 20px;
-                border-top: 1px solid #eee;
+                color: #7D6E63;
+                font-size: 14px;
+                padding: 20px;
+                border-top: 1px solid #f0e6d9;
             }
             .pickup-details {
-                background: #f9f9f9;
+                background: #FFF8F0;
                 padding: 15px;
-                border-radius: 5px;
+                border-radius: 8px;
                 margin: 15px 0;
-                border: 1px solid #e5a98c;
+                border: 1px solid #D2B48C;
             }
             
             .location-note {
-                color: #666;
+                color: #7D6E63;
                 font-style: italic;
                 margin: 10px 0;
             }
             
             .map-container {
                 margin: 15px 0;
-                border-radius: 5px;
-                overflow: hidden;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .map-container a {
+                display: inline-block;
+                background-color: #8B5E3C;
+                color: white;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 30px;
+                font-weight: 600;
+                text-align: center;
+            }
+            
+            .map-container a:hover {
+                background-color: #4A3728;
             }
         </style>
     </head>
@@ -227,17 +283,25 @@ function generate_order_email_html($orderData) {
             
             <div class="greeting">
                 <p>Hi {$customer['firstName']},</p>
-                <p>Thank you for choosing Gatita Bakes! Your order has been received and is pending payment.</p>
+                <p>Thank you for choosing Gatita Bakes! Your order has been received and is being processed.</p>
             </div>
             
             <div class="order-details">
+                <h2>Order Information</h2>
+                <div class="order-meta">
+                    <p><strong>Order Date:</strong> {$orderDate}</p>
+                    <p><strong>Order Type:</strong> {$orderType}</p>
+                    $locationDetails
+                </div>
+                
                 <h2>Order Summary</h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Item</th>
                             <th class="qty">Qty</th>
-                            <th class="price">Price</th>
+                            <th class="unit-price">Price</th>
+                            <th class="price">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -245,42 +309,33 @@ function generate_order_email_html($orderData) {
                     </tbody>
                 </table>
                 <div class="total">
-                    Total: \${$total}
+                    Total: \$" . number_format($total, 2) . "
                 </div>
             </div>
             
             <div class="info-box">
-                <h3>Your Information</h3>
-                <p><strong>Name:</strong> {$customer['firstName']} {$customer['lastName']}</p>
-                <p><strong>Email:</strong> {$customer['email']}</p>
-                <p><strong>Phone:</strong> {$customer['phone']}</p>
-                
-                <h3>" . ucfirst($orderType) . " Details</h3>
-                $locationDetails
-                
-                " . (!empty($notes) ? "<p><strong>Notes:</strong> {$notes}</p>" : "") . "
-            </div>
-            
-            <div class="info-box">
-                <h3>Payment Instructions</h3>
-                <p>Please send payment via Venmo to: <strong>@katvalderrama</strong></p>
-                <p>Include your order number (#$orderNumber) in the payment note.</p>
+                <h3>Payment Information</h3>
+                <p>Please complete your payment using one of the following methods:</p>
+                <ol>
+                    <li>Venmo: @katvalderrama</li>
+                    <li>Cash: Available for in-person pickup only</li>
+                </ol>
+                <p><strong>Payment Reference:</strong> Please include your order number (#$orderNumber) in your payment note.</p>
                 <div style="text-align: center;">
-                    <a href="$venmoUrl" class="button" style="color: white;">
-                        Pay \${$total} on Venmo
-                    </a>
+                    <a href=\"$venmoUrl\" class="button">Pay with Venmo</a>
                 </div>
             </div>
             
             <div class="important">
-                <strong>Important:</strong> Your order is not confirmed until payment is received and verified. Katerina will contact you to confirm payment and arrange pickup/delivery.
+                <h3>Important Notes</h3>
+                <p>Your order will be confirmed once payment is received. You will receive a confirmation email with pickup/delivery details.</p>
+                <p>If you have any questions or need to make changes to your order, please contact us at info@gatitabakes.com or (555) 123-4567.</p>
             </div>
             
-            <p>If you have any questions, please don't hesitate to contact us at info@gatitabakes.com</p>
-            <p>Thank you for supporting Gatita Bakes!</p>
-            
             <div class="footer">
-                <p>&copy; " . date('Y') . " Gatita Bakes. All rights reserved.</p>
+                <p>Gatita Bakes - Artisan Sourdough Bread</p>
+                <p>Sacramento, California</p>
+                <p>© " . date('Y') . " Gatita Bakes. All rights reserved.</p>
             </div>
         </div>
     </body>
@@ -291,87 +346,98 @@ function generate_order_email_html($orderData) {
 }
 
 /**
- * Generate plain-text version of email for clients that don't support HTML
+ * Plain text email version for non-HTML email clients
  */
 function generate_order_email_text($orderData) {
     $customer = $orderData['customer'];
     $orderNumber = $orderData['orderNumber'];
     $orderType = $orderData['orderType'];
     $items = $orderData['items'];
-    $total = $orderData['total'];
-    $notes = $orderData['notes'] ?? '';
     
-    // Format address or pickup location
-    $locationDetails = '';
+    // Use orderTotal if available, otherwise calculate
+    $total = isset($orderData['orderTotal']) ? $orderData['orderTotal'] : 0;
+    if ($total == 0) {
+        foreach ($items as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+    }
+    
+    $orderDate = isset($orderData['orderDate']) ? date('F j, Y', strtotime($orderData['orderDate'])) : date('F j, Y');
+    
+    // Build plain text email
+    $text = "GATITA BAKES - ORDER CONFIRMATION\n";
+    $text .= "============================\n\n";
+    $text .= "Order #$orderNumber\n";
+    $text .= "Date: $orderDate\n\n";
+    
+    $text .= "Hi {$customer['firstName']},\n\n";
+    $text .= "Thank you for choosing Gatita Bakes! Your order has been received and is being processed.\n\n";
+    
+    $text .= "ORDER INFORMATION\n";
+    $text .= "------------------\n";
+    $text .= "Order Type: " . ucfirst($orderType) . "\n";
+    
     if ($orderType === 'delivery' && isset($orderData['deliveryAddress'])) {
         $address = $orderData['deliveryAddress'];
-        $locationDetails = "Delivery Address: {$address['street']}";
-        if (!empty($address['unit'])) {
-            $locationDetails .= ", {$address['unit']}";
-        }
-        $locationDetails .= "\n{$address['city']}, {$address['state']} {$address['zip']}";
-    } elseif ($orderType === 'pickup' && isset($orderData['pickupLocation'])) {
-        $locationDetails = "Pickup Location: {$orderData['pickupLocation']}";
+        $text .= "Delivery Address:\n";
+        $text .= "{$address['street']}\n";
         
-        // Add detailed address for West Sacramento location in plain text
-        if ($orderData['pickupLocation'] === 'West Sacramento') {
-            $locationDetails .= "\nFull Address: 291 McDowell Lane, West Sacramento, CA 95605\nNote: Across the street from Burgers & Brew";
-        } elseif ($orderData['pickupLocation'] === 'Sac Farmers Market') {
-            $locationDetails .= "\nNote: Specific market location and time details will be provided when your order is confirmed.";
+        if (!empty($address['unit'])) {
+            $text .= "{$address['unit']}\n";
+        }
+        
+        $text .= "{$address['city']}, {$address['state']} {$address['zip']}\n\n";
+    } elseif ($orderType === 'pickup' && isset($orderData['pickupLocation'])) {
+        $pickupLocationName = '';
+        
+        switch ($orderData['pickupLocation']) {
+            case 'westsac':
+                $pickupLocationName = 'West Sacramento (Near I St. Bridge)';
+                break;
+            case 'farmersmarket':
+                $pickupLocationName = 'Sacramento Farmers Market';
+                break;
+            default:
+                $pickupLocationName = $orderData['pickupLocation'];
+        }
+        
+        $text .= "Pickup Location: {$pickupLocationName}\n\n";
+        
+        if ($orderData['pickupLocation'] === 'westsac') {
+            $text .= "Full Address:\n";
+            $text .= "291 McDowell Lane\n";
+            $text .= "West Sacramento, CA 95605\n";
+            $text .= "(Across the street from Burgers & Brew)\n\n";
+        } elseif ($orderData['pickupLocation'] === 'farmersmarket') {
+            $text .= "Katerina will provide specific market location and time details when confirming your order.\n\n";
         }
     }
     
-    // Create items text
-    $itemsText = '';
+    $text .= "ORDER SUMMARY\n";
+    $text .= "-------------\n";
+    
     foreach ($items as $item) {
-        $price = $item['price'] * $item['quantity'];
-        $itemsText .= "{$item['quantity']} x {$item['name']} - \${$price}\n";
+        $itemTotal = number_format($item['price'] * $item['quantity'], 2);
+        $text .= "{$item['name']} x {$item['quantity']} - \${$itemTotal}\n";
     }
     
-    // Plain text email
-    $text = <<<TEXT
-THANK YOU FOR YOUR ORDER!
-Order #{$orderNumber}
-
-Hi {$customer['firstName']},
-
-Thank you for choosing Gatita Bakes! Your order has been received and is pending payment.
-
-ORDER SUMMARY:
---------------
-{$itemsText}
-Total: \${$total}
-
-YOUR INFORMATION:
-----------------
-Name: {$customer['firstName']} {$customer['lastName']}
-Email: {$customer['email']}
-Phone: {$customer['phone']}
-
-" . strtoupper($orderType) . " DETAILS:
-----------------
-{$locationDetails}
-TEXT;
-
-    if (!empty($notes)) {
-        $text .= "\nNotes: {$notes}";
-    }
-
-    $text .= <<<TEXT
-
-
-PAYMENT INSTRUCTIONS:
--------------------
-Please send payment via Venmo to: @katvalderrama
-Include your order number (#{$orderNumber}) in the payment note.
-
-IMPORTANT: Your order is not confirmed until payment is received and verified.
-Katerina will contact you to confirm payment and arrange pickup/delivery.
-
-If you have any questions, please contact info@gatitabakes.com
-
-Thank you for supporting Gatita Bakes!
-TEXT;
-
+    $text .= "\nTOTAL: \$" . number_format($total, 2) . "\n\n";
+    
+    $text .= "PAYMENT INFORMATION\n";
+    $text .= "-------------------\n";
+    $text .= "Please complete your payment using one of the following methods:\n\n";
+    $text .= "1. Venmo: @katvalderrama\n";
+    $text .= "2. Cash: Available for in-person pickup only\n\n";
+    $text .= "Payment Reference: Please include your order number (#$orderNumber) in your payment note.\n\n";
+    
+    $text .= "IMPORTANT NOTES\n";
+    $text .= "--------------\n";
+    $text .= "Your order will be confirmed once payment is received. You will receive a confirmation email with pickup/delivery details.\n\n";
+    $text .= "If you have any questions or need to make changes to your order, please contact us at info@gatitabakes.com or (555) 123-4567.\n\n";
+    
+    $text .= "Gatita Bakes - Artisan Sourdough Bread\n";
+    $text .= "Sacramento, California\n";
+    $text .= "© " . date('Y') . " Gatita Bakes. All rights reserved.\n";
+    
     return $text;
 } 
