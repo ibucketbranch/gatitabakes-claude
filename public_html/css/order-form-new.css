@@ -8,7 +8,7 @@
 
 /* DESIGN ALIGNED WITH UI GUIDES */
 :root {
-  /* Colors from UI mockups */
+  /* Colors from UI mockups - warm brown palette */
   --primary-brown: #8B4513;
   --light-brown: #D4A373;
   --cream: #F8F3E8;
@@ -28,20 +28,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Frame around the entire form - aligned with UI mockups */
+/* Clean, minimalist container matching UI mockups */
 .order-form-container {
   max-width: 1200px;
   margin: 30px auto;
-  padding: 40px;
+  padding: 20px;
   background-color: var(--soft-white);
-  border-radius: 16px;
-  box-shadow: var(--shadow-soft);
   position: relative;
 }
 
 .order-form-inner {
   background-color: var(--soft-white);
-  border-radius: 12px;
   position: relative;
   z-index: 2;
 }
@@ -82,7 +79,7 @@ body {
 
 .product-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   transition: all 0.3s ease;
@@ -108,7 +105,7 @@ body {
   justify-content: center;
   margin-bottom: 15px;
   background: white;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
@@ -117,7 +114,7 @@ body {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: transform 0.3s ease;
 }
 
@@ -144,7 +141,7 @@ body {
   color: white;
   border: none;
   padding: 8px 15px;
-  border-radius: 25px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -155,14 +152,14 @@ body {
 
 .add-to-cart:hover {
   background: #6d370f;
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .add-to-cart.added {
   background: #5A9A62;
 }
 
-/* Order Form and Cart */
+/* Order Form and Cart - clean styling from UI mockups */
 .order-form-wrapper {
   display: flex;
   gap: 30px;
@@ -173,7 +170,7 @@ body {
 .order-form, .cart-summary {
   background: white;
   padding: 25px;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: var(--shadow-soft);
   border: 1px solid var(--border-color);
 }
@@ -213,7 +210,7 @@ body {
   position: relative;
   background: white;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -223,7 +220,7 @@ body {
 }
 
 .order-type-option:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-soft);
 }
 
@@ -253,7 +250,7 @@ body {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   background-color: white;
   transition: all 0.3s ease;
@@ -276,7 +273,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -310,7 +307,7 @@ body {
   background: var(--primary-brown);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 12px 20px;
   margin-top: 20px;
   font-size: 1rem;
@@ -325,7 +322,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Refined Cart Items Design */
+/* Refined Cart Items Design to match UI mockups */
 .sidebar-cart-items {
   margin-bottom: 20px;
 }
@@ -336,7 +333,7 @@ body {
   justify-content: space-between;
   padding: 12px;
   margin-bottom: 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: var(--soft-white);
   transition: all 0.3s ease;
   border: 1px solid var(--border-color);
