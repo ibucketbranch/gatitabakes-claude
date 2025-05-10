@@ -62,19 +62,20 @@ require_once 'includes/header.php';
         .hero-image-full {
             width: 100vw;
             max-width: 100%;
-            height: 340px;
+            height: 550px;
             object-fit: cover;
             display: block;
             margin: 0 auto;
         }
         #our-story {
             max-width: 900px;
-            margin: 60px auto 0 auto;
+            margin: 120px auto 0 auto;
             padding: 2rem;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(139, 69, 19, 0.06);
             min-height: 180px;
+            scroll-margin-top: 100px;
         }
         #our-story h2 {
             color: #8b4513;
