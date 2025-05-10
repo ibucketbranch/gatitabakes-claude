@@ -1,3 +1,11 @@
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: Configuration Settings
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2025-09-05
+ */
+
 <?php
 // Error reporting - temporarily enabled for debugging
 error_reporting(E_ALL);
