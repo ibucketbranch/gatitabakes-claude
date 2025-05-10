@@ -1,12 +1,26 @@
 /* src/components/BreadOrderForm.css */
 /**
- * Title: Gatita Bakes
+ * Project: Gatita Bakes Online Order System
+ * Title: Order Form Styles
  * Author/Developer: Bucketbranch Engineering LLC
  * Version: 20250905.1
- * Date: May 7, 2025
- * 
- * Styles for the artisan bread ordering component
+ * Date: 2025-09-05
  */
+
+:root {
+  --primary-brown: #8b4513;
+  --light-brown: #d4a373;
+  --cream: #f8f3e8;
+  --soft-white: #faf6f0;
+  --dark-text: #2c1810;
+  --shadow-soft: 0 2px 8px rgba(139, 69, 19, 0.08);
+  --shadow-hover: 0 4px 12px rgba(139, 69, 19, 0.12);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  /* Adding a new iOS-specific variable */
+  --ios-tap-highlight: rgba(0, 0, 0, 0);
+}
 
 /* General Styles */
 * {
