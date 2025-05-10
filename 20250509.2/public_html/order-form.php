@@ -116,7 +116,7 @@ require_once 'includes/header.php';
           <div class="sidebar-cart-items"></div>
           <div class="sidebar-cart-total">Total: $0.00</div>
         </div>
-        <button type="button" class="place-order-btn" onclick="submitOrder()">Place Order</button>
+        <button type="button" class="place-order-btn" onclick="submitOrder(event)">Place Order</button>
       </div>
     </div>
   </div>

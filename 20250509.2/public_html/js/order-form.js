@@ -16,11 +16,19 @@ let cart = [];
 const baseURL = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Order form script loaded');
+    
     // Initialize cart from localStorage if available
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-        cart = JSON.parse(savedCart);
-        updateCartDisplay();
+        try {
+            cart = JSON.parse(savedCart);
+            updateCartDisplay();
+        } catch (e) {
+            console.error('Error parsing saved cart:', e);
+            localStorage.removeItem('cart');
+            cart = [];
+        }
     }
 
     // Add event listeners for add to cart buttons
@@ -71,50 +79,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    nextBtn.addEventListener('click', function() {
-        // Validate current step before proceeding
-        if (currentStep === 1) {
-            // Check if order type is selected
-            const orderTypeSelected = document.querySelector('input[name="order_type"]:checked');
-            if (!orderTypeSelected) {
-                alert('Please select an order type (Pickup or Delivery)');
-                return;
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            // Validate current step before proceeding
+            if (currentStep === 1) {
+                // Check if order type is selected
+                const orderTypeSelected = document.querySelector('input[name="order_type"]:checked');
+                if (!orderTypeSelected) {
+                    alert('Please select an order type (Pickup or Delivery)');
+                    return;
+                }
+                
+                // Check if cart has items
+                if (cart.length === 0) {
+                    alert('Please add at least one item to your cart before continuing');
+                    return;
+                }
             }
             
-            // Check if cart has items
-            if (cart.length === 0) {
-                alert('Please add at least one item to your cart before continuing');
-                return;
+            if (currentStep < steps.length) {
+                steps[currentStep - 1].style.display = 'none';
+                steps[currentStep].style.display = 'block';
+                currentStep++;
+                updateNavButtons();
             }
-        }
-        
-        if (currentStep < steps.length) {
-            steps[currentStep - 1].style.display = 'none';
-            steps[currentStep].style.display = 'block';
-            currentStep++;
-            updateNavButtons();
-        }
-    });
+        });
+    }
 
-    backBtn.addEventListener('click', function() {
-        if (currentStep > 1) {
-            steps[currentStep - 1].style.display = 'none';
-            steps[currentStep - 2].style.display = 'block';
-            currentStep--;
-            updateNavButtons();
-        }
-    });
+    if (backBtn) {
+        backBtn.addEventListener('click', function() {
+            if (currentStep > 1) {
+                steps[currentStep - 1].style.display = 'none';
+                steps[currentStep - 2].style.display = 'block';
+                currentStep--;
+                updateNavButtons();
+            }
+        });
+    }
 
     // Initialize step visibility
-    steps.forEach((step, idx) => {
-        step.style.display = idx === 0 ? 'block' : 'none';
-    });
-    updateNavButtons();
+    if (steps.length > 0) {
+        steps.forEach((step, idx) => {
+            step.style.display = idx === 0 ? 'block' : 'none';
+        });
+        updateNavButtons();
+    }
 
-    // Handle form submission
-    const orderForm = document.getElementById('order-form');
-    if (orderForm) {
-        orderForm.addEventListener('submit', submitOrder);
+    // Add submit handler to the place order button
+    const placeOrderBtn = document.querySelector('.place-order-btn');
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', function(e) {
+            submitOrder(e);
+        });
     }
 });
 
@@ -171,7 +187,10 @@ function updateCartDisplay() {
     const sidebarCartItems = document.querySelector('.sidebar-cart-items');
     const sidebarCartTotal = document.querySelector('.sidebar-cart-total');
     
-    if (!sidebarCartItems || !sidebarCartTotal) return;
+    if (!sidebarCartItems || !sidebarCartTotal) {
+        console.error('Cart display elements not found');
+        return;
+    }
     
     sidebarCartItems.innerHTML = '';
     
@@ -204,7 +223,11 @@ function updateCartDisplay() {
 }
 
 function submitOrder(event) {
-    event.preventDefault();
+    if (event) {
+        event.preventDefault();
+    }
+    
+    console.log('Submit order function called');
     
     if (cart.length === 0) {
         alert('Please add items to your cart before submitting the order.');
@@ -212,7 +235,10 @@ function submitOrder(event) {
     }
     
     const form = document.getElementById('order-form');
-    if (!form) return;
+    if (!form) {
+        console.error('Order form not found');
+        return;
+    }
     
     // For step 1, check if order type is selected
     const orderType = document.querySelector('input[name="order_type"]:checked');
@@ -226,31 +252,54 @@ function submitOrder(event) {
     const requiredFields = [];
     
     if (orderType.value === 'pickup') {
-        requiredFields.push(document.getElementById('pickup-location'));
+        const pickupLocation = document.getElementById('pickup-location');
+        if (pickupLocation) {
+            requiredFields.push(pickupLocation);
+        } else {
+            console.error('Pickup location field not found');
+        }
     } else {
-        requiredFields.push(
+        const addressFields = [
             document.getElementById('delivery-address'),
             document.getElementById('delivery-city'),
             document.getElementById('delivery-zip')
-        );
+        ];
+        
+        addressFields.forEach(field => {
+            if (field) {
+                requiredFields.push(field);
+            } else {
+                console.error('Required delivery field not found');
+            }
+        });
     }
     
     // Common required fields
-    requiredFields.push(
+    const contactFields = [
         document.getElementById('first-name'),
         document.getElementById('last-name'),
         document.getElementById('email'),
         document.getElementById('phone')
-    );
+    ];
+    
+    contactFields.forEach(field => {
+        if (field) {
+            requiredFields.push(field);
+        } else {
+            console.error('Required contact field not found');
+        }
+    });
     
     // Validate all required fields
     let isValid = true;
     for (const field of requiredFields) {
         if (!field.value.trim()) {
             field.classList.add('error');
+            field.style.borderColor = '#ff6b6b';
             isValid = false;
         } else {
             field.classList.remove('error');
+            field.style.borderColor = '';
         }
     }
     
@@ -289,6 +338,16 @@ function submitOrder(event) {
         };
     }
     
+    // Disable the submit button and show loading state
+    const submitBtn = document.querySelector('.place-order-btn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        submitBtn.style.opacity = '0.7';
+    }
+    
+    console.log('Submitting order data:', orderData);
+    
     // Submit the order via AJAX
     fetch('includes/process-order.php', {
         method: 'POST',
@@ -297,21 +356,47 @@ function submitOrder(event) {
         },
         body: JSON.stringify(orderData)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response received:', response);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Order processed:', data);
         if (data.success) {
-            alert(`Order #${data.orderNumber} submitted successfully! Check your email for confirmation.`);
+            // Clear cart and show success message
             cart = [];
             localStorage.removeItem('cart');
             updateCartDisplay();
             form.reset();
+            
+            alert(`Order #${data.orderNumber} submitted successfully! Check your email for confirmation.`);
+            
+            // Redirect to confirmation page
             window.location.href = 'order-confirmation.php?order=' + data.orderNumber;
         } else {
-            alert('Error: ' + data.message);
+            // Enable the button again
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Place Order';
+                submitBtn.style.opacity = '1';
+            }
+            
+            alert('Error: ' + (data.message || 'Unknown error occurred'));
         }
     })
     .catch(error => {
         console.error('Error submitting order:', error);
-        alert('There was an error submitting your order. Please try again.');
+        
+        // Enable the button again
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Place Order';
+            submitBtn.style.opacity = '1';
+        }
+        
+        alert('There was an error submitting your order. Please try again or contact us for assistance.');
     });
 }
