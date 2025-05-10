@@ -1,3 +1,10 @@
+/**
+ * Project: Gatita Bakes Online Order Form
+ * Title: Main Ordering Page for Gatita Bakes Artisan Bread
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2025-09-05
+ */
 <?php
 // Include required files
 require_once 'includes/config.php';

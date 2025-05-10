@@ -1,3 +1,8 @@
+// Project Header: Order Form JavaScript
+// Description: Handles the order form logic and interactions
+// Author: [Your Name]
+// Date: [Today's Date]
+
 // Cart functionality
 let cart = [];
 const baseURL = window.location.origin;
