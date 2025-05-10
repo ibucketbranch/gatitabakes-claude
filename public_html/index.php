@@ -69,7 +69,7 @@ require_once 'includes/header.php';
         }
         #our-story {
             max-width: 900px;
-            margin: 120px auto 0 auto;
+            margin: 400px auto 0 auto;
             padding: 2rem;
             background: #fff;
             border-radius: 12px;
