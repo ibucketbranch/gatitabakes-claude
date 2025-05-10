@@ -1,7 +1,11 @@
-// Project Header: Order Form JavaScript
-// Description: Handles the order form logic and interactions
-// Author: [Your Name]
-// Date: [Today's Date]
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: Order Form JavaScript
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2025-09-05
+ */
+
 
 // Cart functionality
 let cart = [];
