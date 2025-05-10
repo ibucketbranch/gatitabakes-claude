@@ -1,0 +1,62 @@
+# Configuration files
+includes/config.php
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+public_html/includes/order_emails.log
+
+# Dependencies
+vendor/
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Uploaded files
+public/uploads/
+public/images/products/
+
+# Cache
+cache/
+*.cache
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Reference/old code - not part of the project
+Old site code/
+**/Old site code/**
+
+# Misc
+.env.local
+.env.*.local 
