@@ -6,174 +6,92 @@
  * Date: 2024-05-09
  */
 <?php
-// Include required files
+$page_title = 'Gatita Bakes - Artisan Bread';
 require_once 'includes/config.php';
-require_once 'includes/functions.php';
-require_once 'includes/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gatita Bakes - Artisan Bread Orders</title>
+    <title><?php echo SITE_NAME; ?></title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/order-form.css">
-    <link rel="stylesheet" href="css/carousel.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script>
-        // This can be updated when moving to production
-        const baseURL = window.location.origin;
-    </script>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <h1>Gatita Bakes</h1>
-            </div>
-            <ul>
-                <li><a href="#home">Home</a></li>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">Gatita Bakes</div>
+            <ul class="nav-links">
                 <li><a href="#products">Our Breads</a></li>
-                <li><a href="#order">Order Now</a></li>
+                <li><a href="order-form.php" class="nav-cta">Order Now</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-        </nav>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Artisan Bread<br>Made with Love</h1>
+            <p>Fresh, handcrafted sourdough and artisan breads<br>baked daily in Sacramento</p>
+            <a href="order-form.php" class="cta-button">Order Now</a>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <img src="images/gatita-bakes-hero.jpg" alt="Gatita Bakes Hero" class="hero-image">
-        <div class="hero-overlay">
-            <h1>Welcome to Gatita Bakes</h1>
-            <p>Fresh, artisan bread and pastries made with love.</p>
-        </div>
-    </div>
-
-    <main>
-        <section id="home" class="hero">
-            <h2>Welcome to Gatita Bakes</h2>
-            <p>Artisan bread made with love and care</p>
-            <a href="#order" class="cta-button">Order Now</a>
-        </section>
-
-        <section id="products" class="products-section">
+    <section id="products" class="products">
+        <div class="section-container">
             <h2>Our Artisan Collection</h2>
-            <div class="carousel-container">
-                <!-- First set of products -->
-                <div class="product-slide active">
-                    <div class="product-grid">
-                        <div class="product-card">
-                            <div class="placeholder-img">Plain Sourdough</div>
-                            <img src="images/Plain-Sourdough-Loaf.jpg" 
-                                 alt="Plain Sourdough"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Plain Sourdough</h3>
-                            <p>$8.00</p>
-                            <button class="add-to-cart" data-id="plain-sourdough" data-price="8.00">Add to Cart</button>
-                        </div>
-                        <div class="product-card">
-                            <div class="placeholder-img">Everything Sourdough</div>
-                            <img src="images/Everything-Sourdough-Loaf.jpg" 
-                                 alt="Everything Sourdough"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Everything Sourdough</h3>
-                            <p>$9.00</p>
-                            <button class="add-to-cart" data-id="everything-sourdough" data-price="9.00">Add to Cart</button>
-                        </div>
-                        <div class="product-card">
-                            <div class="placeholder-img">Plain Bagels</div>
-                            <img src="images/Plain-Bagels.png" 
-                                 alt="Plain Bagels"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Plain Bagels</h3>
-                            <p>$3.00</p>
-                            <button class="add-to-cart" data-id="plain-bagels" data-price="3.00">Add to Cart</button>
-                        </div>
+            <div class="product-grid">
+                <?php foreach ($PRODUCTS as $id => $product): ?>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="<?php echo IMAGES_PATH . '/' . $product['image']; ?>" 
+                             alt="<?php echo $product['name']; ?>">
+                    </div>
+                    <div class="product-info">
+                        <h3><?php echo $product['name']; ?></h3>
+                        <p class="price">$<?php echo number_format($product['price'], 2); ?></p>
                     </div>
                 </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="products-cta">
+                <a href="order-form.php" class="cta-button">Place Your Order</a>
+            </div>
+        </div>
+    </section>
 
-                <!-- Second set of products -->
-                <div class="product-slide">
-                    <div class="product-grid">
-                        <div class="product-card">
-                            <div class="placeholder-img">Rosemary Sourdough</div>
-                            <img src="images/Rosemary-Sourdough-Loaf.png" 
-                                 alt="Rosemary Sourdough"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Rosemary Sourdough</h3>
-                            <p>$9.00</p>
-                            <button class="add-to-cart" data-id="rosemary-sourdough" data-price="9.00">Add to Cart</button>
-                        </div>
-                        <div class="product-card">
-                            <div class="placeholder-img">Jalapeño Cheese Bagels</div>
-                            <img src="images/Cheese-Jalapeńo-Bagels.png" 
-                                 alt="Jalapeño Cheese Bagels"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Jalapeño Cheese Bagels</h3>
-                            <p>$3.50</p>
-                            <button class="add-to-cart" data-id="jalapeno-cheese-bagels" data-price="3.50">Add to Cart</button>
-                        </div>
-                        <div class="product-card">
-                            <div class="placeholder-img">Garlic Sourdough</div>
-                            <img src="images/Plain-Sourdough-Loaf.jpg" 
-                                 alt="Garlic Sourdough"
-                                 onload="this.previousElementSibling.style.display='none'"
-                                 onerror="this.style.display='none'">
-                            <h3>Garlic Sourdough</h3>
-                            <p>$9.00</p>
-                            <button class="add-to-cart" data-id="garlic-sourdough" data-price="9.00">Add to Cart</button>
-                        </div>
-                    </div>
+    <section id="contact" class="contact">
+        <div class="section-container">
+            <h2>Visit Us</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>West Sacramento</h3>
+                    <p>291 McDowell Lane<br>West Sacramento, CA 95605</p>
+                    <p class="hours">Tuesday-Saturday, 7am-3pm</p>
                 </div>
-
-                <!-- Carousel Navigation -->
-                <div class="carousel-nav">
-                    <button class="carousel-arrow carousel-prev" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="carousel-dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                    </div>
-                    <button class="carousel-arrow carousel-next">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                <div class="contact-info">
+                    <h3>Farmers Market</h3>
+                    <p>Sacramento Central<br>Under the freeway on 8th & W</p>
+                    <p class="hours">Sundays, 8am-12pm</p>
+                </div>
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>Email: <?php echo SITE_EMAIL; ?><br>
+                    Phone: (555) 123-4567</p>
                 </div>
             </div>
-        </section>
-
-        <!-- Order Now Button (Standalone Link) -->
-        <section id="order-link" class="order-link-section">
-            <div style="text-align:center; margin: 3rem 0;">
-                <a href="order-form.php" class="cta-button" style="font-size:1.3em; padding:1.2em 2.5em; background:#8b4513; color:#fff; border-radius:32px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(139,69,19,0.13); transition:background 0.2s;">Order Now</a>
-            </div>
-        </section>
-
-        <section id="contact" class="contact-section">
-            <h2>Contact Us</h2>
-            <div class="contact-info">
-                <p><strong>Email:</strong> <?php echo SITE_EMAIL; ?></p>
-                <p><strong>Phone:</strong> (555) 123-4567</p>
-                <p><strong>Hours:</strong> Tuesday-Saturday, 7am-3pm</p>
-                <p><strong>Location:</strong> 123 Bakery Street, San Francisco, CA 94110</p>
-            </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <footer>
-        <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
+        <div class="section-container">
+            <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
+        </div>
     </footer>
 
-    <!-- Update JavaScript references -->
+    <!-- Only essential JavaScript -->
     <script src="js/main.js"></script>
-    <script src="js/carousel.js"></script>
-    <script src="js/order-form.js"></script>
 </body>
 </html>
 
