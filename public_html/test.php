@@ -1,6 +1,54 @@
 <?php
 $page_title = 'Order Form Test';
 $additional_head = '<style>
+    body {
+        background: #faf6f0;
+        margin: 0;
+        padding: 0;
+    }
+    header.hero-header {
+        background: #8b4513;
+        color: #fff;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .hero-nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 1rem 1.2rem 1rem;
+    }
+    .hero-logo h1 {
+        font-size: 2.2em;
+        font-family: 'Georgia', serif;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+    .nav-links {
+        display: flex;
+        gap: 2.5rem;
+    }
+    .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.15em;
+        transition: color 0.2s;
+    }
+    .nav-links a:hover {
+        color: #d4a373;
+    }
+    footer {
+        background: #8b4513;
+        color: #fff;
+        text-align: center;
+        padding: 1.2rem 0 1rem 0;
+        margin-top: 60px;
+        width: 100%;
+    }
     /* Updated layout styles */
     body {
         font-family: Arial, sans-serif;
@@ -1641,3 +1689,24 @@ function generateVenmoLink(orderNumber, amount) {
     return `https://venmo.com/${venmoUsername}?txn=pay&amount=${amount}&note=${encodeURIComponent(note)}`;
 }
 </script>
+<footer>
+    <div style="margin-bottom: 0.5rem;">
+        Contact: <a href="mailto:orders@gatitabakes.com" style="color:#fff;text-decoration:underline;">orders@gatitabakes.com</a>
+    </div>
+    <div style="margin-bottom: 0.5rem;">
+        <a href="https://instagram.com" target="_blank" style="margin:0 0.5rem; color:#fff; display:inline-block; vertical-align:middle;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg>
+        </a>
+        <a href="https://facebook.com" target="_blank" style="margin:0 0.5rem; color:#fff; display:inline-block; vertical-align:middle;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="https://bsky.app" target="_blank" style="margin:0 0.5rem; color:#fff; display:inline-block; vertical-align:middle;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 17c-1.5-2-5-2.5-7-5.5C2.5 11 4 7.5 7 8.5c2 .5 2.5 3 5 3s3-2.5 5-3c3-1 4.5 2.5 2 5.5-2 3-5.5 3.5-7 5.5z"/>
+            </svg>
+        </a>
+    </div>
+    <div>
+        &copy; <?php echo date('Y'); ?> Gatita Bakes. All rights reserved.
+    </div>
+</footer>
