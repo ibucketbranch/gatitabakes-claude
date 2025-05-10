@@ -22,78 +22,56 @@ require_once 'includes/header.php';
         html {
             scroll-behavior: smooth;
         }
-        .hero-section {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            margin: 40px auto 40px auto;
-            overflow: hidden;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            height: 340px;
+        body {
+            background: #faf6f0;
         }
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+        header.hero-header {
+            background: #fff;
+            color: #8b4513;
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.04);
+            padding: 0;
         }
-        .hero-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            background: rgba(0,0,0,0.25);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
-        }
-        .hero-overlay h1 {
-            font-size: 2.8em;
-            margin-bottom: 0.3em;
-            letter-spacing: 2px;
-        }
-        .hero-overlay p {
-            font-size: 1.3em;
-            font-weight: 400;
-        }
-        header {
-            background: #8b4513;
-            color: #fff;
-            padding: 0.5rem 0;
-        }
-        nav {
+        .hero-nav {
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 1.5rem 1rem 1.2rem 1rem;
         }
-        .logo h1 {
-            font-size: 1.5em;
-            margin: 0 1rem;
+        .hero-logo h1 {
+            font-size: 2.2em;
+            font-family: 'Georgia', serif;
+            margin: 0;
+            letter-spacing: 1px;
         }
         .nav-links {
             display: flex;
-            gap: 2rem;
-            margin-right: 1rem;
+            gap: 2.5rem;
         }
         .nav-links a {
-            color: #fff;
+            color: #8b4513;
             text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1em;
+            font-weight: 600;
+            font-size: 1.15em;
             transition: color 0.2s;
         }
         .nav-links a:hover {
             color: #d4a373;
         }
+        .hero-image-full {
+            width: 100vw;
+            max-width: 100%;
+            height: 340px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+        }
         #our-story {
             max-width: 900px;
             margin: 60px auto 0 auto;
             padding: 2rem;
-            background: #faf6f0;
+            background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(139, 69, 19, 0.06);
             min-height: 180px;
@@ -102,12 +80,19 @@ require_once 'includes/header.php';
             color: #8b4513;
             margin-bottom: 1rem;
         }
+        footer {
+            background: #8b4513;
+            color: #fff;
+            text-align: center;
+            padding: 1.2rem 0 1rem 0;
+            margin-top: 60px;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
+    <header class="hero-header">
+        <nav class="hero-nav">
+            <div class="hero-logo">
                 <h1>Gatita Bakes</h1>
             </div>
             <div class="nav-links">
@@ -118,13 +103,7 @@ require_once 'includes/header.php';
         </nav>
     </header>
     <main>
-        <div class="hero-section" id="top">
-            <img src="images/hero-page-fullpage.png" alt="Gatita Bakes Hero" class="hero-image">
-            <div class="hero-overlay">
-                <h1>Welcome to Gatita Bakes</h1>
-                <p>Artisan bread made with love and delight.</p>
-            </div>
-        </div>
+        <img src="images/hero-page-fullpage.png" alt="Gatita Bakes Hero" class="hero-image-full" id="top">
         <section id="our-story">
             <h2>Our Story</h2>
             <p><!-- Add Katerina's vision and story here. --></p>
