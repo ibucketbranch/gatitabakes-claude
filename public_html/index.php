@@ -121,10 +121,8 @@ require_once 'includes/header.php';
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
             <a href="https://bsky.app" target="_blank" style="margin:0 0.5rem; color:#fff; display:inline-block; vertical-align:middle;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 19c-1.5-2-5-2.5-7-5.5C2.5 11 4 7.5 7 8.5c2 .5 2.5 3 5 3s3-2.5 5-3c3-1 4.5 2.5 2 5.5-2 3-5.5 3.5-7 5.5z"/>
-                    <circle cx="8.5" cy="10.5" r="1"/>
-                    <circle cx="15.5" cy="10.5" r="1"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 17c-1.5-2-5-2.5-7-5.5C2.5 11 4 7.5 7 8.5c2 .5 2.5 3 5 3s3-2.5 5-3c3-1 4.5 2.5 2 5.5-2 3-5.5 3.5-7 5.5z"/>
                 </svg>
             </a>
         </div>
