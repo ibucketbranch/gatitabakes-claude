@@ -1,0 +1,337 @@
+/* src/components/BreadOrderForm.css */
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: Order Form Styles
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2025-09-05
+ */
+
+:root {
+  --primary-brown: #8b4513;
+  --light-brown: #d4a373;
+  --cream: #f8f3e8;
+  --soft-white: #faf6f0;
+  --dark-text: #2c1810;
+  --shadow-soft: 0 2px 8px rgba(139, 69, 19, 0.08);
+  --shadow-hover: 0 4px 12px rgba(139, 69, 19, 0.12);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+}
+
+/* iOS-optimized container */
+.order-form-container {
+  max-width: 860px;
+  margin: calc(1rem + var(--safe-area-inset-top)) auto;
+  background: var(--soft-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  -webkit-overflow-scrolling: touch;
+}
+
+.order-title {
+  font-size: 1.5rem;
+  color: var(--dark-text);
+  text-align: center;
+  margin: 1rem 0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  padding: 0 1rem;
+}
+
+.order-form-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.5rem;
+  padding: 0 1rem 1rem;
+}
+
+/* iOS-optimized Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  padding: 0.2rem;
+}
+
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.product-card:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+.product-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+
+.product-info {
+  padding: 0.8rem;
+}
+
+.product-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--dark-text);
+  margin-bottom: 0.3rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+.product-price {
+  color: var(--primary-brown);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* iOS-optimized Form Elements */
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.form-section h2 {
+  font-size: 1.1rem;
+  color: var(--dark-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  -webkit-font-smoothing: antialiased;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--dark-text);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS-native form styling */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #ffffff;
+  transition: var(--transition-smooth);
+}
+
+.form-group select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 6L0 0h12z' fill='%238B4513'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.5rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--light-brown);
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
+  outline: none;
+}
+
+/* iOS-optimized Cart Summary */
+.cart-summary {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem - var(--safe-area-inset-bottom));
+  overflow-y: auto;
+  box-shadow: var(--shadow-soft);
+  -webkit-overflow-scrolling: touch;
+}
+
+.cart-summary h2 {
+  font-size: 1.1rem;
+  color: var(--dark-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sidebar-cart-items {
+  margin-bottom: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--cream);
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item-info {
+  flex: 1;
+  padding-right: 0.5rem;
+}
+
+.cart-item-name {
+  font-size: 0.85rem;
+  color: var(--dark-text);
+  margin-bottom: 0.2rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cart-item-price {
+  font-size: 0.9rem;
+  color: var(--primary-brown);
+  font-weight: 600;
+}
+
+/* iOS-styled Button */
+.place-order-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--primary-brown);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  margin-top: 1rem;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.place-order-btn:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+/* iOS-optimized Responsive Design */
+@media (max-width: 768px) {
+  .order-form-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .cart-summary {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: calc(1rem + var(--safe-area-inset-bottom));
+    z-index: 100;
+    max-height: 60vh;
+  }
+  
+  .main-content {
+    margin-bottom: calc(60vh + 1rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .order-form-container {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+    padding-top: var(--safe-area-inset-top);
+  }
+  
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    padding: 0.4rem;
+  }
+  
+  .product-card {
+    border-radius: 10px;
+  }
+  
+  .product-card img {
+    height: 110px;
+  }
+  
+  .form-section,
+  .cart-summary {
+    border-radius: 12px;
+  }
+  
+  .place-order-btn {
+    padding: 1rem;
+    margin-bottom: var(--safe-area-inset-bottom);
+  }
+}
+
+/* iOS-specific Animations */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(8px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.product-card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* iOS-style Progress Indicator */
+.progress-steps {
+  display: flex;
+  justify-content: center;
+  margin: 0.8rem 0;
+  gap: 0.4rem;
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cream);
+  transition: var(--transition-smooth);
+}
+
+.progress-dot.active {
+  background: var(--primary-brown);
+  transform: scale(1.2);
+}
+
+/* Add iOS-safe bottom spacing */
+.order-form-container::after {
+  content: '';
+  display: block;
+  height: var(--safe-area-inset-bottom);
+}
