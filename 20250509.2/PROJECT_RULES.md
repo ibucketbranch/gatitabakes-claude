@@ -3,7 +3,7 @@
  * Title: Project Rules
  * Author/Developer: Bucketbranch Engineering LLC
  * Version: 20250905.1
- * Date: 2024-05-09
+ * Date: 2024-06-09
  */
 
 # PROJECT RULES for Gatita Bakes Online Order Form
@@ -48,10 +48,10 @@
 - Code must reflect the look, feel, and style of the mockups in this folder.
 - If the code does not match the mockup, continue iterating until it does, following the principles and design shown in the mockups.
 
-## 9. Timestamp Monitoring and Automatic Commits
-- Check file timestamps regularly; if more than 59 minutes have passed since the last check-in, commit any files that have changed.
-- Include all modified files in the commit regardless of whether they were explicitly modified during the current session.
-- Follow standard commit procedures outlined in Rule #2 for these automatic commits.
+## 9. Auto-Proceed with Next Steps
+- Proceed with the next logical improvements or steps without asking for permission.
+- Only ask for user input on major decisions that could significantly impact the project direction or functionality.
+- Use professional judgment to determine what constitutes a "major decision" requiring user input.
 
 ---
 
