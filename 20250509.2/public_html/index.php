@@ -148,94 +148,11 @@ require_once 'includes/header.php';
             </div>
         </section>
 
-        <section id="order" class="order-section">
-            <h2>Place Your Order</h2>
-            <form id="order-form" class="order-form">
-                <div class="form-columns">
-                    <div class="form-column">
-                        <h3>Contact Information</h3>
-                        <div class="form-group">
-                            <label for="first-name">First Name</label>
-                            <input type="text" id="first-name" name="first-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="last-name">Last Name</label>
-                            <input type="text" id="last-name" name="last-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Mobile Phone</label>
-                            <input type="tel" id="phone" name="phone" required>
-                        </div>
-
-                        <h3>Order Type</h3>
-                        <div class="form-group order-type">
-                            <div class="radio-group">
-                                <input type="radio" id="pickup" name="order_type" value="pickup" checked>
-                                <label for="pickup">Pickup</label>
-                                <input type="radio" id="delivery" name="order_type" value="delivery">
-                                <label for="delivery">Delivery</label>
-                            </div>
-                        </div>
-
-                        <div id="pickup-location-fields">
-                            <div class="form-group">
-                                <label for="pickup-location">Pickup Location</label>
-                                <select id="pickup-location" name="pickup-location" required>
-                                    <option value="">Select pickup location</option>
-                                    <option value="westsac">West Sacramento (Near I St. Bridge)</option>
-                                    <option value="farmersmarket">Sac Farmers Market</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pickup-notes">Notes for Pickup</label>
-                                <textarea id="pickup-notes" name="pickup-notes"></textarea>
-                            </div>
-                        </div>
-
-                        <div id="delivery-address-fields" style="display: none;">
-                            <div class="form-group">
-                                <label for="delivery-address">Street Address</label>
-                                <input type="text" id="delivery-address" name="delivery-address">
-                            </div>
-                            <div class="form-group">
-                                <label for="delivery-unit">Apt/Suite/Unit</label>
-                                <input type="text" id="delivery-unit" name="delivery-unit">
-                            </div>
-                            <div class="form-group">
-                                <label for="delivery-city">City</label>
-                                <input type="text" id="delivery-city" name="delivery-city">
-                            </div>
-                            <div class="form-group">
-                                <label for="delivery-notes">Delivery Instructions</label>
-                                <textarea id="delivery-notes" name="delivery-notes"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-column">
-                        <div id="cart-summary" class="cart-summary">
-                            <h3>Order Summary</h3>
-                            <div class="cart-items">
-                                <!-- Cart items will be inserted here by JavaScript -->
-                            </div>
-                            <div id="empty-cart-message">Your cart is empty. Add some delicious bread!</div>
-                            <div class="cart-total">Total: $0.00</div>
-                        </div>
-
-                        <div class="payment-info">
-                            <h3>Payment Information</h3>
-                            <p>Payment via Venmo: @katielawendowski</p>
-                            <p class="payment-note">Payment instructions will be sent with your order confirmation.</p>
-                        </div>
-
-                        <button type="submit" class="submit-order" id="submit-order">Submit Order</button>
-                    </div>
-                </div>
-            </form>
+        <!-- Order Now Button (Standalone Link) -->
+        <section id="order-link" class="order-link-section">
+            <div style="text-align:center; margin: 3rem 0;">
+                <a href="order-form.php" class="cta-button" style="font-size:1.3em; padding:1.2em 2.5em; background:#8b4513; color:#fff; border-radius:32px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(139,69,19,0.13); transition:background 0.2s;">Order Now</a>
+            </div>
         </section>
 
         <section id="contact" class="contact-section">
