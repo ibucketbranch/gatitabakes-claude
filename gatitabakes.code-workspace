@@ -1,0 +1,51 @@
+{
+	"folders": [
+		{
+			"name": "Main Project",
+			"path": "."
+		},
+		{
+			"name": "Current Branch (20250510.2)",
+			"path": "20250510.2"
+		},
+		{
+			"name": "Previous Branch (20250509.2)",
+			"path": "20250509.2"
+		},
+		{
+			"name": "UI Mockups",
+			"path": "UI"
+		}
+	],
+	"settings": {
+		"files.autoSave": "afterDelay",
+		"editor.formatOnSave": true,
+		"editor.detectIndentation": true,
+		"editor.tabSize": 4,
+		"php.validate.executablePath": "/usr/bin/php",
+		"workbench.colorCustomizations": {
+			"statusBar.background": "#8b4513",
+			"statusBar.foreground": "#ffffff",
+			"activityBar.background": "#8b4513",
+			"activityBar.foreground": "#ffffff"
+		}
+	},
+	"launch": {
+		"configurations": [
+			{
+				"name": "Launch Project in Browser",
+				"type": "chrome",
+				"request": "launch",
+				"url": "http://localhost:8002/clear-cache.php",
+				"webRoot": "${workspaceFolder}/public_html"
+			}
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"felixfbecker.php-intellisense",
+			"bmewburn.vscode-intelephense-client",
+			"ritwickdey.liveserver"
+		]
+	}
+} 
