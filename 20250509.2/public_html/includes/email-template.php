@@ -1,4 +1,10 @@
-<?php
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: email-template.php
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2024-06-09
+ */
 /**
  * Email Template for Gatita Bakes Order Confirmation
  *

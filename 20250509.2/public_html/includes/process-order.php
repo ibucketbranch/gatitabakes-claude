@@ -1,3 +1,10 @@
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: process-order.php
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2024-06-09
+ */
 <?php
 // Order processing for Gatita Bakes
 header('Content-Type: application/json');

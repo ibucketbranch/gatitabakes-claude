@@ -1,8 +1,9 @@
 /**
- * Title: Gatita Bakes
- * Author/Developer: Bucketbranch
- * Version: 1.0.0
- * Date: May 7, 2025
+ * Project: Gatita Bakes Online Order System
+ * Title: email-config.php
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2024-06-09
  * 
  * Email Integration with EmailJS Setup Guide
  */

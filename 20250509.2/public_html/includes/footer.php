@@ -1,3 +1,10 @@
+/**
+ * Project: Gatita Bakes Online Order System
+ * Title: footer.php
+ * Author/Developer: Bucketbranch Engineering LLC
+ * Version: 20250905.1
+ * Date: 2024-06-09
+ */
 <?php
 // Get current year for copyright
 $current_year = date('Y');
