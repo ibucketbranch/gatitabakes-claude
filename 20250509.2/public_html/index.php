@@ -6,6 +6,7 @@
  * Date: 2024-05-09
  */
 <?php
+include_once 'nocache.php'; // Prevent caching
 $page_title = 'Gatita Bakes - Artisan Bread';
 require_once 'includes/config.php';
 ?>
