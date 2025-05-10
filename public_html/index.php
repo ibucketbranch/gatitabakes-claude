@@ -2,8 +2,8 @@
  * Project: Gatita Bakes Online Order Form
  * Title: Main Ordering Page for Gatita Bakes Artisan Bread
  * Author/Developer: Bucketbranch Engineering LLC
- * Version: 20250905.1
- * Date: 2025-09-05
+ * Version: 20250510.2
+ * Date: 2025-05-10
  */
 <?php
 // Include required files
@@ -119,7 +119,7 @@ require_once 'includes/header.php';
     </header>
     <main>
         <div class="hero-section" id="top">
-            <img src="images/gatita-bakes-hero.jpg" alt="Gatita Bakes Hero" class="hero-image">
+            <img src="images/hero-page-fullpage.png" alt="Gatita Bakes Hero" class="hero-image">
             <div class="hero-overlay">
                 <h1>Welcome to Gatita Bakes</h1>
                 <p>Artisan bread made with love and delight.</p>
