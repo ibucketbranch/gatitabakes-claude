@@ -6,7 +6,6 @@
  * Date: 2025-09-05
  */
 
-
 // Cart functionality
 let cart = [];
 const baseURL = window.location.origin;

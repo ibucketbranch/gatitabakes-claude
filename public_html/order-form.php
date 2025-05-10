@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Order Bread – Gatita Bakes';
-$additional_head = '<link rel="stylesheet" href="css/order-form.css">';
+$additional_head = '<link rel="stylesheet" href="css/order-form.css?v=' . time() . '">';
 require_once 'includes/header.php';
 ?>
 
@@ -122,5 +122,5 @@ require_once 'includes/header.php';
     </div>
 </main>
 
-<script src="js/order-form.js"></script>
+<script src="js/order-form.js?v=<?php echo time(); ?>"></script>
 <?php require_once 'includes/footer.php'; ?>
